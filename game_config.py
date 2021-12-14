@@ -17,11 +17,12 @@ class GameConfig:
     #Pour les méthodes de pygame qui on besoin que pygame soit initialisé avant
     #donc création d'une fonction init() appeller quand dans le main on fait pygame.init()
     def init():
-        GameConfig.BACKGROUND_IMG = pygame.image.load('assets/fond_nuage.jpg')
+        GameConfig.BACKGROUND_IMG = pygame.image.load('assets/fond/fond_nuage.jpg')
         GameConfig.BACKGROUND_IMG = pygame.transform.scale(GameConfig.BACKGROUND_IMG,(960,640))
-        GameConfig.BRICK_IMG = pygame.image.load('assets/brick_block_mario.png')
+        GameConfig.BRICK_IMG = pygame.image.load('assets/block/brick_block_mario.png')
         GameConfig.BRICK_IMG = pygame.transform.scale(GameConfig.BRICK_IMG, (100,100))
-        GameConfig.SURPRISE_IMG = pygame.image.load('assets/surprise_block_mario.png')
-        GameConfig.SURPRISE_IMG = pygame.transform.scale(GameConfig.SURPRISE_IMG, (120,120))
-        GameConfig.STANDING_IMG = pygame.image.load('assets/standing.png')
+        GameConfig.SURPRISE_IMG = pygame.image.load('assets/block/surprise_block_mario.png')
+        GameConfig.SURPRISE_IMG = pygame.transform.scale(GameConfig.SURPRISE_IMG, (100,100))
+        GameConfig.STATIC_LEFT_IMG = pygame.image.load('assets/worms/worms_statique.png')
+
 

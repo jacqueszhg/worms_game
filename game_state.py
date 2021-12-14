@@ -15,7 +15,9 @@ class GameState:
         window.blit(GameConfig.BRICK_IMG,(250,350))
         window.blit(GameConfig.BRICK_IMG,(350,375))
         window.blit(GameConfig.BRICK_IMG,(375,475))
+        window.blit(GameConfig.BRICK_IMG,(385,575))
         window.blit(GameConfig.BRICK_IMG,(575,450))
+
         window.blit(GameConfig.SURPRISE_IMG,(700,100))
         self.worms.draw(window)
 

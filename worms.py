@@ -8,7 +8,7 @@ class Worms:
             self.rect = pygame.Rect(x, GameConfig.Y_PLATEFORM - GameConfig.WORMS_H,
                                     GameConfig.WORMS_W,
                                     GameConfig.WORMS_H)
-            self.image = GameConfig.STANDING_IMG
+            self.image = GameConfig.STATIC_LEFT_IMG
             self.vx = 0
             self.vy = 0
 
