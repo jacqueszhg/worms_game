@@ -6,8 +6,8 @@ class GameConfig:
     WINDOW_H = 640
     WINDOW_W = 960
     Y_PLATEFORM = 510
-    WORMS_W = 64
-    WORMS_H = 64
+    WORMS_W = 32
+    WORMS_H = 38
     DT = 0.5
     FORCE_LEFT = -20
     FORCE_RIGHT = -FORCE_LEFT

@@ -22,7 +22,6 @@ def game_loop(window):
         game_state.draw(window)
         pygame.display.update()
 
-
 def get_next_move():
     next_move = Move()
     keys = pygame.key.get_pressed()
