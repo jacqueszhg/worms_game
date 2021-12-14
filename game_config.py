@@ -20,9 +20,13 @@ class GameConfig:
         GameConfig.BACKGROUND_IMG = pygame.image.load('assets/fond/fond_nuage.jpg')
         GameConfig.BACKGROUND_IMG = pygame.transform.scale(GameConfig.BACKGROUND_IMG,(960,640))
         GameConfig.BRICK_IMG = pygame.image.load('assets/block/brick_block_mario.png')
-        GameConfig.BRICK_IMG = pygame.transform.scale(GameConfig.BRICK_IMG, (100,100))
+        GameConfig.BRICK_IMG = pygame.transform.scale(GameConfig.BRICK_IMG,(50,50))
         GameConfig.SURPRISE_IMG = pygame.image.load('assets/block/surprise_block_mario.png')
-        GameConfig.SURPRISE_IMG = pygame.transform.scale(GameConfig.SURPRISE_IMG, (100,100))
+        GameConfig.SURPRISE_IMG = pygame.transform.scale(GameConfig.SURPRISE_IMG,(50,50))
+        GameConfig.DIRT_UP_IMG = pygame.image.load('assets/block/dirt_block_Up.png')
+        GameConfig.DIRT_UP_IMG = pygame.transform.scale(GameConfig.DIRT_UP_IMG,(50,50))
+        GameConfig.DIRT_DOWN_IMG = pygame.image.load('assets/block/dirt_block_Down.png')
+        GameConfig.DIRT_DOWN_IMG = pygame.transform.scale(GameConfig.DIRT_DOWN_IMG,(50,50))
         GameConfig.STATIC_LEFT_IMG = pygame.image.load('assets/worms/worms_statique.png')
 
 
