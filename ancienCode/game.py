@@ -43,6 +43,7 @@ def main():
     #Initialisation de la fenetre de jeux, avec son nom
     window = pygame.display.set_mode((GameConfig.WINDOW_W,GameConfig.WINDOW_H))
     pygame.display.set_caption("Worms")
+
     #Lance le jeux
     game_loop(window)
     #Ferme pygame proprement
