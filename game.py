@@ -13,7 +13,7 @@ def game_loop(window):
             if event.type == pygame.QUIT :
                 quitting = True
         next_move = get_next_move()
-        game_state.advance_state(next_move,window)
+        game_state.advance_state(next_move)
         pygame.time.delay(50)
         pygame.display.update()
 

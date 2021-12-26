@@ -14,5 +14,5 @@ class GameState:
         self.map.draw(window)
         self.worms.draw(window)
 
-    def advance_state(self, next_move, window):
-        self.worms.advance_state(next_move,window)
+    def advance_state(self, next_move):
+        self.worms.advance_state(next_move,self.map)

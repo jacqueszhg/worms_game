@@ -1,7 +1,10 @@
 import time
 
 import pygame
+
+import map
 from game_config import *
+from map import *
 
 class Worms(pygame.sprite.Sprite):
     LEFT = -1
@@ -23,7 +26,7 @@ class Worms(pygame.sprite.Sprite):
     def draw(self,window):
         window.blit(self.image, self.rect)
 
-    def advance_state(self, next_move,window):
+    def advance_state(self, next_move,map):
         # Acceleration
         fx = 0
         fy = 0
@@ -83,12 +86,16 @@ class Worms(pygame.sprite.Sprite):
         self.rect = self.rect.move(self.vx * GameConfig.DT, self.vy * GameConfig.DT)
 
         x = self.rect.left
-        vx_min = -x / GameConfig.DT
-        vx_max = (GameConfig.WINDOW_W - GameConfig.WORMS_W - x) / GameConfig.DT
+        vx_min = (-x + (GameConfig.MUR_W-15))/ GameConfig.DT #peut pas sortit de l'écran à gauche
+        vx_max = ( GameConfig.WINDOW_W- GameConfig.MUR_W-GameConfig.WORMS_W - x) / GameConfig.DT #peut pas sortir de l'écran à droite
         self.vx = min(self.vx, vx_max)
 
         y = self.rect.top
+        #GameConfig.Y_PLATEFORM = GameConfig.BLOCKS[self.rect.left].top
+        #GameConfig.Y_PLATEFORM = map.f(self.rect.left)
+        GameConfig.Y_PLATEFORM = int(map.getPolynome(self.rect.left))
         vy_max = (GameConfig.Y_PLATEFORM - GameConfig.WORMS_H - y) / GameConfig.DT
+
         self.vy = min(self.vy, vy_max)
         self.vx = max(self.vx, vx_min)
 

@@ -8,6 +8,9 @@ class GameConfig:
     WINDOW_W = 1000
     Y_PLATEFORM = 516
     BLOCKS = []
+    MUR = []
+    MUR_H = 25
+    MUR_W = 25
     WORMS_H = 35
     WORMS_W = 32
     DT = 0.5
