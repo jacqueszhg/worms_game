@@ -40,3 +40,4 @@ class GameConfig:
         GameConfig.DIRT_BLOCK_IMG = pygame.image.load('assets/block/dirt_block_Down.png')
         GameConfig.DIRT_BLOCK_IMG = pygame.transform.scale(GameConfig.DIRT_BLOCK_IMG,(20,10))
 
+        GameConfig.BULLET_CARABINE_IMG = pygame.image.load('assets/bullet/bullet_carabine.png')

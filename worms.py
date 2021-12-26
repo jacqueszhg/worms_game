@@ -5,6 +5,7 @@ import pygame
 import map
 from game_config import *
 from map import *
+from  carabine import *
 
 class Worms(pygame.sprite.Sprite):
     LEFT = -1
@@ -26,7 +27,7 @@ class Worms(pygame.sprite.Sprite):
     def draw(self,window):
         window.blit(self.image, self.rect)
 
-    def advance_state(self, next_move,map):
+    def advance_state(self, next_move,map,window):
         # Acceleration
         fx = 0
         fy = 0
@@ -74,6 +75,7 @@ class Worms(pygame.sprite.Sprite):
                 else:
                     self.image = GameConfig.WALK_JUMP_IMG_GAUCHE
 
+        self.weaponChoice(next_move,window)
 
         # Vitesse
         self.vx = fx * GameConfig.DT
@@ -105,3 +107,17 @@ class Worms(pygame.sprite.Sprite):
         if(self.rect.bottom == GameConfig.Y_PLATEFORM):
             return True
         return False
+
+    def weaponChoice(self,next_move,window):
+        if(next_move.carabine):
+            self.shoot("carabine",window)
+        elif(next_move.rocket):
+            self.shoot("rocket",window)
+
+    def shoot(self,weapon,window):
+        mouse_pos = pygame.mouse.get_pos()
+        if(weapon == "carabine"):
+            carabine = Carabine(window)
+            carabine.shoot(self.rect.topright,mouse_pos,1)
+        elif(weapon == "rocket"):
+            print((mouse_pos))

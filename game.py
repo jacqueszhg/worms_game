@@ -13,7 +13,7 @@ def game_loop(window):
             if event.type == pygame.QUIT :
                 quitting = True
         next_move = get_next_move()
-        game_state.advance_state(next_move)
+        game_state.advance_state(next_move,window)
         pygame.time.delay(50)
         pygame.display.update()
 
@@ -27,6 +27,10 @@ def get_next_move():
         next_move.left = True
     if keys[pygame.K_UP]:
         next_move.jump = True
+    if keys[pygame.K_1]:
+        next_move.carabine = True
+    elif keys[pygame.K_2]:
+        next_move.rocket = True
 
     return next_move
 
