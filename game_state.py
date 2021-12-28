@@ -16,3 +16,10 @@ class GameState:
 
     def advance_state(self, next_move,window):
         self.worms.advance_state(next_move,self.map,window)
+
+        #recuperer les projectiles du joueur
+        for bullet in self.worms.all_bullets:
+            bullet.move(window)
+
+        #affiche la bullet
+        self.worms.all_bullets.draw(window)

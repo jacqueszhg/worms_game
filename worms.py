@@ -5,7 +5,7 @@ import pygame
 import map
 from game_config import *
 from map import *
-from  carabine import *
+from bullet import *
 
 class Worms(pygame.sprite.Sprite):
     LEFT = -1
@@ -23,6 +23,7 @@ class Worms(pygame.sprite.Sprite):
         self.vx = 0
         self.vy = 0
         self.temp = 0
+        self.all_bullets = pygame.sprite.Group()
 
     def draw(self,window):
         window.blit(self.image, self.rect)
@@ -117,7 +118,6 @@ class Worms(pygame.sprite.Sprite):
     def shoot(self,weapon,window):
         mouse_pos = pygame.mouse.get_pos()
         if(weapon == "carabine"):
-            carabine = Carabine(window)
-            carabine.shoot(self.rect.topright,mouse_pos,1)
+            self.all_bullets.add(Bullet(10,GameConfig.BULLET_CARABINE_IMG,self,mouse_pos))
         elif(weapon == "rocket"):
             print((mouse_pos))
