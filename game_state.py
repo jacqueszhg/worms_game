@@ -20,6 +20,5 @@ class GameState:
         #recuperer les projectiles du joueur
         for bullet in self.worms.all_bullets:
             bullet.move(window)
-
         #affiche la bullet
         self.worms.all_bullets.draw(window)

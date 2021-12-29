@@ -30,6 +30,9 @@ class Bullet(pygame.sprite.Sprite):
     def remove(self):
         self.worms.all_bullets.remove(self)
 
+    def draw(self,window):
+        window.blit(self.image,self.rect)
+
     def move(self,window):
         #idée 1 tire que en ligne droite
         """
@@ -86,7 +89,6 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.y = (-(a * self.rect.x)-c)/b
         #self.rect.y -= 12 selon une puissance donnée on fait baisé la balle
 
-        pygame.draw.line(window,(255,0,0),(self.worms.rect.x+26,self.worms.rect.y +10),self.mouse_pos)
 
         #vérifier si la bullet est hors écran
         #ajouter une condition que la bullet disparait qu'on un certain temps est passé
