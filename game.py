@@ -21,11 +21,11 @@ def game_loop(window):
 def get_next_move():
     next_move = Move()
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_RIGHT]:
+    if keys[pygame.K_d]:
         next_move.right = True
-    if keys[pygame.K_LEFT]:
+    if keys[pygame.K_q]:
         next_move.left = True
-    if keys[pygame.K_UP]:
+    if keys[pygame.K_z] or keys[pygame.K_SPACE]:
         next_move.jump = True
     if keys[pygame.K_1]:
         next_move.carabine = True

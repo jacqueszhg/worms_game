@@ -120,12 +120,12 @@ class Worms(pygame.sprite.Sprite):
         pygame.draw.line(window,(255,0,0),(self.rect.x+26,self.rect.y +10),mouse_pos)
         if(weapon == "carabine"):
             if pygame.mouse.get_pressed()[0] == True and len(self.all_bullets) == 0:
-                self.all_bullets.add(Bullet(10,GameConfig.BULLET_CARABINE_IMG,self,mouse_pos))
+                self.all_bullets.add(Bullet(10,GameConfig.BULLET_CARABINE_IMG,self,mouse_pos,"carabine"))
             else:
-                Bullet(10, GameConfig.BULLET_CARABINE_IMG, self, mouse_pos).draw(window)
+                Bullet(0, GameConfig.BULLET_CARABINE_IMG, self, mouse_pos,"carabine").draw(window)
             #self.bullet = Bullet(10,GameConfig.BULLET_CARABINE_IMG,self,mouse_pos)
         elif(weapon == "rocket"):
             if pygame.mouse.get_pressed()[0] == True and len(self.all_bullets) == 0:
-                self.all_bullets.add(Bullet(10,GameConfig.BULLET_ROCKET_IMG,self,mouse_pos))
+                self.all_bullets.add(Bullet(5,GameConfig.BULLET_ROCKET_IMG,self,mouse_pos,"rocket"))
             else:
-                Bullet(10, GameConfig.BULLET_ROCKET_IMG, self, mouse_pos).draw(window)
+                Bullet(0, GameConfig.BULLET_ROCKET_IMG, self, mouse_pos,"rocket").draw(window)
