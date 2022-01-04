@@ -19,6 +19,8 @@ class GameConfig:
     GRAVITY = 9.81
     FORCE_JUMP = -70
     WORMS_DROIT = True
+    LIST_WORMS = []
+    PLAY = 0
 
     def init():
 

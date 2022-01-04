@@ -57,6 +57,11 @@ class Bullet(pygame.sprite.Sprite):
     def draw(self,window):
         window.blit(self.image,self.rect)
 
+    def touch(self):
+        if self.rect.colliderect(GameConfig.LIST_WORMS[0]) or self.rect.colliderect(GameConfig.LIST_WORMS[1]):
+            return True
+        return False
+
     def move(self,window):
         if(self.type == "carabine"):
             self.moveCarabine()
@@ -68,6 +73,16 @@ class Bullet(pygame.sprite.Sprite):
         if self.rect.x > GameConfig.WINDOW_W or self.rect.x < 0 or self.rect.y<0 or self.rect.y > 650 :
             #supprimer la bullet
             self.remove()
+
+        #vérifier si la bullet touche un autre joueur
+        if self.touch():
+            self.remove()
+            if self.rect.colliderect(GameConfig.LIST_WORMS[0]):
+                GameConfig.PLAY = 0
+            if self.rect.colliderect(GameConfig.LIST_WORMS[1]):
+                GameConfig.PLAY = 1
+
+
 
     def moveCarabine(self):
         # idée 1 tire que en ligne droite
