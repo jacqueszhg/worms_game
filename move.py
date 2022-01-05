@@ -5,3 +5,4 @@ class Move:
         self.jump = False
         self.carabine = False
         self.rocket = False
+        self.grenade = False

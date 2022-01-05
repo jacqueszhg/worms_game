@@ -1,3 +1,5 @@
+import random
+
 import pygame
 
 
@@ -21,6 +23,9 @@ class GameConfig:
     WORMS_DROIT = True
     LIST_WORMS = []
     PLAY = 0
+    MASSE_MUR = 20
+    MASSE_GRENADE = 5
+    VENT = random.randrange(-100, 100, 10)
 
     def init():
 
@@ -44,3 +49,4 @@ class GameConfig:
 
         GameConfig.BULLET_CARABINE_IMG = pygame.image.load('assets/bullet/bullet_carabine.png')
         GameConfig.BULLET_ROCKET_IMG = pygame.image.load('assets/bullet/bullet_rocket.png')
+        GameConfig.BULLET_GRENADE_IMG = pygame.image.load('assets/bullet/bullet_grenade.png')

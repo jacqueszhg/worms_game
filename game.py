@@ -31,6 +31,9 @@ def get_next_move():
         next_move.carabine = True
     elif keys[pygame.K_2]:
         next_move.rocket = True
+    elif keys[pygame.K_3]:
+        next_move.grenade = True
+
 
     return next_move
 

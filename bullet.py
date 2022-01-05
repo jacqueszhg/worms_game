@@ -1,4 +1,5 @@
 import math
+import random
 import time
 
 import pygame
@@ -16,40 +17,34 @@ import matplotlib.pyplot as plt
 
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self,velocity,image,worms,mouse_pos,type):
+    def __init__(self,velocity,image,worms,mouse_pos,type,angle,vent):
         super().__init__()
         self.worms = worms
         self.image = image
-        self.angle = (1.57)/math.pi
         self.image = pygame.transform.scale(self.image,(15,15))
         self.rect = self.image.get_rect()
-        self.rect.x = worms.rect.x + 26
-        self.rect.y = worms.rect.y + 10
+        self.rect.x = worms.rect.topright[0]
+        self.rect.y = worms.rect.topright[1]
         self.y_origine = self.rect.y
         self.mouse_pos = mouse_pos
-        self.x0 = worms.rect.x + 26
-        self.y0 = worms.rect.y + 10
-
         #vitesse initiale
         if(self.mouse_pos < (self.worms.rect.x,self.worms.rect.y)):
             self.velocity = -velocity
+            self.rect.x = worms.rect.topleft[0] - 15
+            self.rect.y = worms.rect.topleft[1]
         else:
             self.velocity = velocity
+
+        self.x0 = self.rect.x
+        self.y0 = self.rect.y
+        #self.vx = velocity * np.cos(angle)
+        #self.vy = velocity * np.sin(angle)
+        self.vx = angle[0]
+        self.vy = angle[1]
+
         self.temp = time.time()
         self.type = type
-
-
-        self.a = 0
-        self.i = 0
-
-        #méthode4
-        """
-        self.vx = self.velocity * math.cos(self.angle)
-        self.vy = self.velocity * math.sin(self.angle)
-        """
-        self.vx0 = velocity
-
-
+        self.vent = vent
 
     def remove(self):
         self.worms.all_bullets.remove(self)
@@ -62,15 +57,18 @@ class Bullet(pygame.sprite.Sprite):
             return True
         return False
 
-    def move(self,window):
+    def move(self,window,vent):
         if(self.type == "carabine"):
             self.moveCarabine()
         if self.type =="rocket":
             self.moveRocket()
+        if self.type == "grenade":
+            self.moveGrenade()
+
 
         #vérifier si la bullet est hors écran
         #ajouter une condition que la bullet disparait qu'on un certain temps est passé
-        if self.rect.x > GameConfig.WINDOW_W or self.rect.x < 0 or self.rect.y<0 or self.rect.y > 650 :
+        if self.rect.x > GameConfig.WINDOW_W or self.rect.x < 0 or self.rect.y<0 or self.rect.y > 650 or time.time() - self.temp > 5:
             #supprimer la bullet
             self.remove()
 
@@ -123,11 +121,7 @@ class Bullet(pygame.sprite.Sprite):
         """
 
         # mélange idée 3 et 2 fonction mais queleque soucis
-        # gere la vitesse
-        dt = 1.5
-
-        # self.rect.x += self.velocity
-        self.rect.x += self.velocity * dt
+        self.rect.x += self.velocity
 
         pointA = [self.x0, self.y0]
         pointB = self.mouse_pos
@@ -138,129 +132,83 @@ class Bullet(pygame.sprite.Sprite):
         a = vecteurAB[1]
         c = -(a * pointB[0]) - (b * pointB[1])
         self.rect.y = (-(a * self.rect.x) - c) / b
+        print(self.rect.y)
         # self.rect.y -= 12 selon une puissance donnée on fait baisé la balle
 
+
+    def moveGrenade(self):
+        dt = 0.3
+        t = self.rect.x + dt
+        vxn = self.vx
+        vyn = self.vy
+        xn = self.rect.x
+        yn = self.rect.y
+
+        #vx,vy,x,y = self.F_Gravite(t,vxn,vyn,xn,yn)
+        vx,vy,x,y = self.F_Gravite_Friction(t,vxn,vyn,xn,yn)
+        vx = dt * vx
+        vy = dt * vy
+        x = dt * x
+        y = dt * y
+
+        self.vx = vxn + vx
+        self.vy = vyn + vy
+        self.rect.x = xn + x
+        self.rect.y = yn + y
+        collision = False
+        for i in range(len(GameConfig.BLOCKS)):
+            if self.rect.colliderect(GameConfig.BLOCKS[i]) and collision == False:
+                self.chocElastique()
+                collision = True
+        for  i in range(len(GameConfig.MUR)):
+            if self.rect.colliderect(GameConfig.MUR[i])and collision == False:
+                self.chocElastique()
+                collision = True
+
+    #https://fr.wikipedia.org/wiki/Choc_élastique
+    def chocElastique(self):
+         newVx = ((GameConfig.MASSE_GRENADE - GameConfig.MASSE_MUR)/(GameConfig.MASSE_GRENADE + GameConfig.MASSE_MUR)) * self.vx
+         newVy = ((GameConfig.MASSE_GRENADE - GameConfig.MASSE_MUR)/(GameConfig.MASSE_GRENADE + GameConfig.MASSE_MUR)) * self.vy
+         self.vx = newVx
+         self.vy = newVy
+
     def moveRocket(self):
-        """
-        alpha = 90
-        t = time.time() - self.temp
+        dt = 0.3
+        t = self.rect.x + dt
+        vxn = self.vx
+        vyn = self.vy
+        xn = self.rect.x
+        yn = self.rect.y
 
-        self.rect.x += self.velocity * math.cos(alpha* t)
-        #self.rect.y = (1/2)*GameConfig.GRAVITY * (t**2) + self.velocity* math.sin(alpha) * t + self.y0
-        #self.rect.y = ((-GameConfig.GRAVITY / (2*(self.velocity**2)*(math.cos(alpha)**2)))*(t**2)+ math.tan(alpha)*t)+self.y0
-        self.rect.y = -0.5*((GameConfig.GRAVITY*(t**2)/((math.cos(alpha)**2)*self.velocity**2))) +math.tan(alpha)*t+self.y0
-        print(self.rect.x, self.rect.y)
-        """
+        #vx,vy,x,y = self.F_Gravite(t,vxn,vyn,xn,yn)
+        #vx,vy,x,y = self.F_Gravite_Friction(t,vxn,vyn,xn,yn)
+        vx,vy,x,y = self.F_Gravite_Friction_Vent(t,vxn,vyn,xn,yn)
+        vx = dt * vx
+        vy = dt * vy
+        x = dt * x
+        y = dt * y
 
-        """
-        #Je défini les points nécessaire pour calculer la trajectoire
-        # le point O, va corespondre au pint (0,0)
-        pointO = [self.rect.x,self.rect.y]
-        Les positions du projectile à différent instant t
-        x(t) = v0 * cos(alpha) * t
-        y(t) = -1/2g * t² + v0 * sin(alpha) * t
-        
-        On veut pas avoir de t dans nos formules on la subtitue avec x(t):
-        t = x/(v0*cos(alpha)
-        y(x) -1/2g * (x/(v0*cos(alpha)))² + v0 * sin(alpha) * (x/v0 * cos(alpha))
-        y(x) = -(g/(2 *v0² cos²(alpha)))x² + tan(aplha) * x
-        or cos²(x) = (1+cos(2x))/(2)
-        """
-        """
-        alpha = math.radians(60)
-        cosCarreAlpha = (1+math.cos(2*alpha))/2
-        self.rect.x += self.velocity
-        print(cosCarreAlpha)
-        self.rect.y = -(GameConfig.GRAVITY/(2*(self.velocity**2)*cosCarreAlpha)) * (self.rect.x**2) + math.tan(alpha)*self.rect.x - self.y0
-        print(self.rect.y)
-        """
+        self.vx = vxn + vx
+        self.vy = vyn + vy
+        self.rect.x = xn + x
+        self.rect.y = yn + y
 
-        """
-        def zdot(z, t):
-            Calcul de la dérivée de z=(x, y, vx, vy) à l'instant t.
 
-            x, y, vx, vy = z
-            alphav = alpha * N.hypot(vx, vy)
+    def F_Gravite(self,t,vx,vy,x,y):
+        return 0,GameConfig.GRAVITY,vx,vy
 
-            return (vx, vy, -alphav * vx, -g - alphav * vy)  # dz/dt = (vx,vy,x..,y..)
+    def F_Gravite_Friction(self,t,vx,vy,x,y):
+        k = 0.023
+        vx2 = vx**2
+        vy2 = vy**2
+        return k * np.sqrt(vx2+vy2),\
+               k * np.sqrt(vx2+vy2) + GameConfig.GRAVITY,\
+               vx,vy
 
-        g = 9.81  # Pesanteur [m/s2]
-        cx = 0.45  # Coefficient de frottement d'une sphère
-        rhoAir = 1.2  # Masse volumique de l'air [kg/m3] au niveau de la mer, T=20°C
-        rad = 0.1748 / 2  # Rayon du boulet [m]
-        rho = 6.23e3  # Masse volumique du boulet [kg/m3]
-        mass = 4. / 3. * N.pi * rad ** 3 * rho  # Masse du boulet [kg]
-        alpha = 0.5 * cx * rhoAir * N.pi * rad ** 2 / mass  # Coefficient de frottement par unité de masse
-        #print("Masse du boulet: {:.2f} kg".format(mass))
-        #print("Coefficient de frottement par unité de masse: {} S.I.".format(alpha))
-        v0 = 10.  # Vitesse initiale [m/s]
-        alt = 45.  # Inclinaison du canon [deg]
-        alt *= N.pi / 180.  # Inclinaison [rad]
-        z0 = (0., 0., v0 * N.cos(alt), v0 * N.sin(alt))  # (x0, y0, vx0, vy0)
-        tc = N.sqrt(mass / (g * alpha))
-        #print("Temps caractéristique: {:.1f} s".format(tc))é
-        t = N.linspace(0, tc, 1000)
-        zs = SI.odeint(zdot, z0, t)
-        ypos = zs[:, 1] >= 0  # y>0?
-        #print("temps de coll. t(y~0) = {:.0f} s".format(t[ypos][-1]))  # Dernier instant pour lequel y>0
-        #print("portée x(y~0) = {:.0f} m".format(zs[ypos, 0][-1]))  # Portée approximative du canon
-        # print "y(y~0) = {:.0f} m".format(zs[ypos, 1][-1]) # ~0
-        #print("vitesse(y~0): {:.0f} m/s".format(N.hypot(zs[ypos, 2][-1], zs[ypos, 3][-1])))
-
-        
-        if(self.a <3):
-            self.rect.y = -zs[self.i][self.a] + self.y0
-            print(self.rect.y)
-            self.a += 1
-        else:
-            self.rect.y = -zs[self.i][self.a] + self.y0
-            self.a = 0é
-            self.i +=self.velocity
-            self.rect.x = self.i
-        print(zs[ypos,0],zs[ypos,1])
-        print(ypos)
-        """
-
-        """
-        def traj(syst, t):
-            [x, y, vx, vy] = syst
-            alpha = math.atan(vy / vx)
-            dxdt = vx
-            dydt = vy
-            dvxdt = -(k / m) * (vx ** 2) * math.cos(alpha)
-            dvydt = -(k / m) * (vy ** 2) * math.sin(alpha) - g
-            return (dxdt, dydt, dvxdt, dvydt)
-
-        r = 0.02  # 1cm en m
-        cx = 0.3
-        rho = 0  # 1.225kg/m3 pour l'air
-        s = math.pi * (r ** 2)  # surface d'un disque de rayon r
-        steel_density = 7800  # 7800kg/m^3 pour l'acier
-        m = 4 / 3 * math.pi * math.pow(r, 3) * steel_density  # Vol * density
-        k = cx * rho * s / 2  # juste pour simplifier l'equation
-        g = 9.81
-
-        t = np.linspace(0, 10, 1000)
-        systCI = [0, 0, 12, 12]
-        sols = odeint(traj, systCI, t)
-        x = sols[:, 0]
-        y = sols[:, 1]
-        if(self.i < GameConfig.WINDOW_W):
-            self.rect.x = x[self.i] + self.x0
-            self.rect.y = y[self.i] + self.y0
-            self.i +=100
-        elif self.rect.y < GameConfig.WINDOW_H:
-            self.rect.y += self.velocity
-        """
-
-        """
-        def bougerProjectile(x, y, vx, vy, ax, ay, dt):
-            vx += ax * dt
-            vy += ay * dt
-            x += vx * dt
-            y += vy * dt
-            return (x, y, vx, vy)
-
-        if(self.rect.y < GameConfig.WORMS_H or self.rect.x < GameConfig.WINDOW_W):
-            self.rect.x, self.rect.y, self.vx, self.vy = bougerProjectile(self.rect.x, self.rect.y, self.vx, self.vy, 0.0, -GameConfig.GRAVITY, 1)
-        """
+    def F_Gravite_Friction_Vent(self,t,vx,vy,x,y):
+        k = 0.023
+        vx2 = vx**2
+        vy2 = vy**2
+        return k * np.sqrt(vx2+vy2) + self.vent,\
+               k * np.sqrt(vx2+vy2) + GameConfig.GRAVITY,\
+               vx,vy

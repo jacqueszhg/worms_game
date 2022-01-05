@@ -28,7 +28,8 @@ class GameState:
             self.worms.advance_state(next_move, self.map, window)
             # recuperer les projectiles du joueur
             for bullet in self.worms.all_bullets:
-                bullet.move(window)
+                vent = random.randrange(-100,100,10)
+                bullet.move(window,vent)
             # affiche la bullet
             self.worms.all_bullets.draw(window)
         elif GameConfig.PLAY == 1:

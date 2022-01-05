@@ -26,9 +26,12 @@ class Worms(pygame.sprite.Sprite):
         self.vy = 0
         self.temp = 0
         self.all_bullets = pygame.sprite.Group()
+        self.tirer = False
+
 
     def draw(self,window):
         window.blit(self.image, self.rect)
+        self.displayMessage(window,str(GameConfig.VENT),50,100,100)
 
     def advance_state(self, next_move,map,window):
         # Acceleration
@@ -116,19 +119,43 @@ class Worms(pygame.sprite.Sprite):
             self.shoot("carabine",window)
         elif(next_move.rocket):
             self.shoot("rocket",window)
+        elif(next_move.grenade):
+            self.shoot("grenade",window)
 
     def shoot(self,weapon,window):
         mouse_pos = pygame.mouse.get_pos()
-        pygame.draw.line(window,(255,0,0),(self.rect.x+26,self.rect.y +10),mouse_pos)
+        if(mouse_pos < (self.rect.x,self.rect.y)):
+            pygame.draw.line(window, (255, 0, 0), (self.rect.topleft[0], self.rect.topleft[1]), mouse_pos)
+        else:
+            pygame.draw.line(window, (255, 0, 0), self.rect.topright, mouse_pos)
+
+        angle = (mouse_pos[0] - self.rect.x + 26, mouse_pos[1] - self.rect.y + 10)
+
+        if self.tirer == False:
+            GameConfig.VENT = random.randrange(-100,100,10)
+            self.tirer = True
+
         if(weapon == "carabine"):
             if pygame.mouse.get_pressed()[0] == True and len(self.all_bullets) == 0:
-                self.all_bullets.add(Bullet(10,GameConfig.BULLET_CARABINE_IMG,self,mouse_pos, weapon))
+                self.all_bullets.add(Bullet(10,GameConfig.BULLET_CARABINE_IMG,self,mouse_pos, weapon,angle,GameConfig.VENT))
             else:
-                Bullet(10, GameConfig.BULLET_CARABINE_IMG, self, mouse_pos, weapon).draw(window)
+                Bullet(10, GameConfig.BULLET_CARABINE_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT).draw(window)
             #self.bullet = Bullet(10,GameConfig.BULLET_CARABINE_IMG,self,mouse_pos)
         elif(weapon == "rocket"):
             if pygame.mouse.get_pressed()[0] == True and len(self.all_bullets) == 0:
-                self.all_bullets.add(Bullet(10,GameConfig.BULLET_ROCKET_IMG,self,mouse_pos, weapon))
+                self.all_bullets.add(Bullet(10, GameConfig.BULLET_ROCKET_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT))
+                self.tirer = False
             else:
-                Bullet(10, GameConfig.BULLET_ROCKET_IMG, self, mouse_pos, weapon).draw(window)
+                Bullet(10, GameConfig.BULLET_ROCKET_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT).draw(window)
+        elif weapon == "grenade":
+            if pygame.mouse.get_pressed()[0] == True and len(self.all_bullets) == 0:
+                self.all_bullets.add(Bullet(10, GameConfig.BULLET_GRENADE_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT))
+            else:
+                Bullet(10, GameConfig.BULLET_GRENADE_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT).draw(window)
 
+    def displayMessage(self,window, text, fontSize, x, y):
+        font = pygame.font.Font('assets/font/BradBunR.ttf', fontSize)
+        img = font.render("vent" + text, True, (255,255,255))
+        displayRect = img.get_rect()
+        displayRect.center = (x, y)
+        window.blit(img, displayRect)
