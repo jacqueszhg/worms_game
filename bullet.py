@@ -57,7 +57,7 @@ class Bullet(pygame.sprite.Sprite):
             return True
         return False
 
-    def move(self,window,vent):
+    def move(self):
         if(self.type == "carabine"):
             self.moveCarabine()
         if self.type =="rocket":
@@ -132,7 +132,6 @@ class Bullet(pygame.sprite.Sprite):
         a = vecteurAB[1]
         c = -(a * pointB[0]) - (b * pointB[1])
         self.rect.y = (-(a * self.rect.x) - c) / b
-        print(self.rect.y)
         # self.rect.y -= 12 selon une puissance donnée on fait baisé la balle
 
 
@@ -145,7 +144,8 @@ class Bullet(pygame.sprite.Sprite):
         yn = self.rect.y
 
         #vx,vy,x,y = self.F_Gravite(t,vxn,vyn,xn,yn)
-        vx,vy,x,y = self.F_Gravite_Friction(t,vxn,vyn,xn,yn)
+        #vx,vy,x,y = self.F_Gravite_Friction(t,vxn,vyn,xn,yn)
+        vx,vy,x,y = self.F_Gravite_Friction_Vent(t,vxn,vyn,xn,yn)
         vx = dt * vx
         vy = dt * vy
         x = dt * x

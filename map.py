@@ -122,12 +122,22 @@ class Map:
         for ligne in range(len(x)):
             GameConfig.BLOCKS.append(pygame.Rect(x[ligne],y[ligne],GameConfig.WINDOW_W/100,GameConfig.WINDOW_W/100))
 
-
-
-
+        for ligne in range(GameConfig.WINDOW_W):
+            """
+            x = GameConfig.BLOCKS[ligne].x
+            """
+            y = GameConfig.BLOCKS[ligne].y
+            for colonne in range(y,GameConfig.WINDOW_H):
+                print("x:",ligne,"y:",colonne)
+                """
+                GameConfig.BLOCKS.append(pygame.Rect(x, colonne+15,
+                                                     15,
+                                                     15))
+                """
     def draw(self,window):
         for i in range(len(GameConfig.BLOCKS)):
             window.blit(GameConfig.DIRT_BLOCK_IMG,GameConfig.BLOCKS[i])
+
         for i in range (len(GameConfig.MUR)):
             g = pygame.transform.scale(GameConfig.DIRT_BLOCK_IMG, (GameConfig.MUR_W, GameConfig.MUR_H))
             window.blit(g,GameConfig.MUR[i])
