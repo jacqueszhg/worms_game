@@ -16,7 +16,7 @@ class Worms(pygame.sprite.Sprite):
 
     def __init__(self,x, map):
         pygame.sprite.Sprite.__init__(self)
-        GameConfig.Y_PLATEFORM = int(map.getPolynome(x))
+        #GameConfig.Y_PLATEFORM = int(map.getPolynome(x))
         self.rect = pygame.Rect(x,
                                 GameConfig.Y_PLATEFORM - GameConfig.WORMS_H,
                                 GameConfig.WORMS_W,
@@ -101,7 +101,21 @@ class Worms(pygame.sprite.Sprite):
         y = self.rect.top
         #GameConfig.Y_PLATEFORM = GameConfig.BLOCKS[self.rect.left].top
         #GameConfig.Y_PLATEFORM = map.f(self.rect.left)
-        GameConfig.Y_PLATEFORM = int(map.getPolynome(self.rect.left))
+        #GameConfig.Y_PLATEFORM = int(map.getPolynome(self.rect.left))
+        GameConfig.Y_PLATEFORM = GameConfig.BLOCKS[self.rect.x].top
+        """
+        collision = False
+        indice = 0
+        while collision == False:
+            if GameConfig.BLOCKS[indice][0] == self.rect[0] and GameConfig.BLOCKS[indice].top == self.rect.bottom:
+                print("colission : ", GameConfig.BLOCKS[indice],self.rect)
+                GameConfig.Y_PLATEFORM = GameConfig.BLOCKS[indice][1]
+                collision = True
+            if(indice < len(GameConfig.BLOCKS) - 1):
+                indice = indice + 1
+            else:
+                collision = True
+        """
         vy_max = (GameConfig.Y_PLATEFORM - GameConfig.WORMS_H - y) / GameConfig.DT
 
         self.vy = min(self.vy, vy_max)
@@ -132,7 +146,7 @@ class Worms(pygame.sprite.Sprite):
         angle = (mouse_pos[0] - self.rect.x + 26, mouse_pos[1] - self.rect.y + 10)
 
         if self.tirer == False:
-            GameConfig.VENT = random.randrange(-100,100,10)
+            GameConfig.VENT = random.randrange(-50,50,10)
             self.tirer = True
 
         if(weapon == "carabine"):

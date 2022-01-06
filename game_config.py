@@ -23,7 +23,7 @@ class GameConfig:
     LIFE2 = 100
     MASSE_MUR = 20
     MASSE_GRENADE = 5
-    VENT = random.randrange(-100, 100, 10)
+    VENT = random.randrange(-50, 50, 10)
 
     def init():
 

@@ -45,6 +45,7 @@ class Bullet(pygame.sprite.Sprite):
         self.temp = time.time()
         self.type = type
         self.vent = vent
+        self.toucherMur = False
 
     def remove(self):
         self.worms.all_bullets.remove(self)
@@ -57,7 +58,7 @@ class Bullet(pygame.sprite.Sprite):
             return True
         return False
 
-    def move(self):
+    def move(self,window):
         if(self.type == "carabine"):
             self.moveCarabine()
         if self.type =="rocket":
@@ -68,9 +69,18 @@ class Bullet(pygame.sprite.Sprite):
 
         #vérifier si la bullet est hors écran
         #ajouter une condition que la bullet disparait qu'on un certain temps est passé
-        if self.rect.x > GameConfig.WINDOW_W or self.rect.x < 0 or self.rect.y<0 or self.rect.y > 650 or time.time() - self.temp > 5:
+        if self.rect.x > GameConfig.WINDOW_W or self.rect.x < 0 or self.rect.y<0 or self.rect.y > 650 or time.time() - self.temp > 5 or self.toucherMur == True:
             #supprimer la bullet
             self.remove()
+            blockDetruit = []
+            if(self.type == "grenade" or self.type == "rocket"):
+                circle = pygame.draw.circle(window,(255,255,255),self.rect.center,40)
+                for i in range(len(GameConfig.BLOCKS)):
+                    if pygame.Rect.colliderect(circle, GameConfig.BLOCKS[i]):
+                        blockDetruit.append(GameConfig.BLOCKS[i])
+
+            for i in blockDetruit:
+                GameConfig.BLOCKS.remove(i)
 
         #vérifier si la bullet touche un autre joueur
         if self.touch():
@@ -195,6 +205,14 @@ class Bullet(pygame.sprite.Sprite):
         self.vy = vyn + vy
         self.rect.x = xn + x
         self.rect.y = yn + y
+
+
+        for i in range(len(GameConfig.BLOCKS)):
+            if self.rect.colliderect(GameConfig.BLOCKS[i]) and self.toucherMur == False:
+                self.toucherMur = True
+        for  i in range(len(GameConfig.MUR)):
+            if self.rect.colliderect(GameConfig.MUR[i])and self.toucherMur == False:
+                self.toucherMur = True
 
 
     def F_Gravite(self,t,vx,vy,x,y):

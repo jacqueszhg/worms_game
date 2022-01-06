@@ -12,7 +12,6 @@ class GameState:
         self.worms_ennemy = Worms(750, self.map)
         GameConfig.LIST_WORMS.append(self.worms)
         GameConfig.LIST_WORMS.append(self.worms_ennemy)
-        print(GameConfig.LIST_WORMS)
 
 
 
@@ -34,14 +33,14 @@ class GameState:
             self.worms.advance_state(next_move, self.map, window)
             # recuperer les projectiles du joueur
             for bullet in self.worms.all_bullets:
-                bullet.move()
+                bullet.move(window)
             # affiche la bullet
             self.worms.all_bullets.draw(window)
         elif GameConfig.PLAY == 1:
             self.worms_ennemy.advance_state(next_move, self.map, window)
             # recuperer les projectiles du joueur ennemy
             for bullet in self.worms_ennemy.all_bullets:
-                bullet.move()
+                bullet.move(window)
             # affiche la bullet
             self.worms_ennemy.all_bullets.draw(window)
 
