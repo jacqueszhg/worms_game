@@ -1,9 +1,5 @@
-import random
-
 import pygame
-
-
-
+import random
 
 class GameConfig:
     WINDOW_H = 650
@@ -23,6 +19,8 @@ class GameConfig:
     WORMS_DROIT = True
     LIST_WORMS = []
     PLAY = 0
+    LIFE1 = 100
+    LIFE2 = 100
     MASSE_MUR = 20
     MASSE_GRENADE = 5
     VENT = random.randrange(-100, 100, 10)

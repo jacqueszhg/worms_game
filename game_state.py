@@ -21,6 +21,12 @@ class GameState:
         self.map.draw(window)
         self.worms.draw(window)
         self.worms_ennemy.draw(window)
+        font = pygame.font.SysFont("BradBunRb", 25)
+        life_text1 = font.render(f"{GameConfig.LIFE1}", 1, (0,0,0))
+        life_text2 = font.render(f"{GameConfig.LIFE2}", 1, (0,0,0))
+        window.blit(life_text1, (self.worms.rect.x,self.worms.rect.y - 20))
+        window.blit(life_text2, (self.worms_ennemy.rect.x,self.worms_ennemy.rect.y - 20))
+
 
 
     def advance_state(self, next_move,window):

@@ -77,8 +77,11 @@ class Bullet(pygame.sprite.Sprite):
             self.remove()
             if self.rect.colliderect(GameConfig.LIST_WORMS[0]):
                 GameConfig.PLAY = 0
+                GameConfig.LIFE1 = GameConfig.LIFE1-20
             if self.rect.colliderect(GameConfig.LIST_WORMS[1]):
                 GameConfig.PLAY = 1
+                GameConfig.LIFE2 = GameConfig.LIFE2-20
+
 
 
 
