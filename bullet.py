@@ -54,8 +54,9 @@ class Bullet(pygame.sprite.Sprite):
         window.blit(self.image,self.rect)
 
     def touch(self):
-        if self.rect.colliderect(GameConfig.LIST_WORMS[0]) or self.rect.colliderect(GameConfig.LIST_WORMS[1]):
-            return True
+        for i in range(len(GameConfig.LIST_WORMS)):
+            if self.rect.colliderect(GameConfig.LIST_WORMS[i]):
+                return True
         return False
 
     def move(self,window):
@@ -85,12 +86,12 @@ class Bullet(pygame.sprite.Sprite):
         #vérifier si la bullet touche un autre joueur
         if self.touch():
             self.remove()
-            if self.rect.colliderect(GameConfig.LIST_WORMS[0]):
-                GameConfig.PLAY = 0
-                GameConfig.LIFE1 = GameConfig.LIFE1-20
-            if self.rect.colliderect(GameConfig.LIST_WORMS[1]):
-                GameConfig.PLAY = 1
-                GameConfig.LIFE2 = GameConfig.LIFE2-20
+            for i in range(len(GameConfig.LIST_WORMS)):
+                if self.rect.colliderect(GameConfig.LIST_WORMS[i]):
+                    GameConfig.LIST_WORMS[i].life = GameConfig.LIST_WORMS[i].life - 100
+                    if not GameConfig.LIST_WORMS[i].is_death(i):
+                        GameConfig.PLAY = i
+
 
 
 

@@ -8,39 +8,34 @@ class GameState:
     def __init__(self):
         self.map = Map()
         self.map.createMap()
-        self.worms = Worms(20, self.map)
-        self.worms_ennemy = Worms(750, self.map)
-        GameConfig.LIST_WORMS.append(self.worms)
-        GameConfig.LIST_WORMS.append(self.worms_ennemy)
+        GameConfig.LIST_WORMS.append(Worms(20, self.map))
+        GameConfig.LIST_WORMS.append(Worms(500, self.map))
+        GameConfig.LIST_WORMS.append(Worms(750, self.map))
 
 
 
     def draw(self,window):
         window.blit(GameConfig.BACKGROUND_IMG,(0,0))
         self.map.draw(window)
-        self.worms.draw(window)
-        self.worms_ennemy.draw(window)
         font = pygame.font.SysFont("BradBunRb", 25)
-        life_text1 = font.render(f"{GameConfig.LIFE1}", 1, (0,0,0))
-        life_text2 = font.render(f"{GameConfig.LIFE2}", 1, (0,0,0))
-        window.blit(life_text1, (self.worms.rect.x,self.worms.rect.y - 20))
-        window.blit(life_text2, (self.worms_ennemy.rect.x,self.worms_ennemy.rect.y - 20))
+        for i in range(len(GameConfig.LIST_WORMS)):
+            GameConfig.LIST_WORMS[i].draw(window)
+            life_text = font.render(f"{GameConfig.LIST_WORMS[i].life}", 1, (0, 0, 0))
+            window.blit(life_text, (GameConfig.LIST_WORMS[i].rect.x, GameConfig.LIST_WORMS[i].rect.y - 20))
+        #for i in range(len(GameConfig.LIST_WORMS)):&&&&&
+        #    if GameConfig.LIST_WORMS[i].is_death(i):
+        #        GameConfig.LIST_WORMS[i].remove()
 
 
 
     def advance_state(self, next_move,window):
-        if GameConfig.PLAY == 0:
-            self.worms.advance_state(next_move, self.map, window)
-            # recuperer les projectiles du joueur
-            for bullet in self.worms.all_bullets:
-                bullet.move(window)
-            # affiche la bullet
-            self.worms.all_bullets.draw(window)
-        elif GameConfig.PLAY == 1:
-            self.worms_ennemy.advance_state(next_move, self.map, window)
-            # recuperer les projectiles du joueur ennemy
-            for bullet in self.worms_ennemy.all_bullets:
-                bullet.move(window)
-            # affiche la bullet
-            self.worms_ennemy.all_bullets.draw(window)
+        for i in range(len(GameConfig.LIST_WORMS)):
+            if not GameConfig.LIST_WORMS[i].is_death(i):
+                if GameConfig.PLAY == i:
+                    GameConfig.LIST_WORMS[i].advance_state(next_move, self.map, window)
+                    # recuperer les projectiles du joueur
+                    for bullet in GameConfig.LIST_WORMS[i].all_bullets:
+                        bullet.move(window)
+                    # affiche la bullet
+                    GameConfig.LIST_WORMS[i].all_bullets.draw(window)
 

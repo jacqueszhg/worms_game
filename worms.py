@@ -16,7 +16,7 @@ class Worms(pygame.sprite.Sprite):
 
     def __init__(self,x, map):
         pygame.sprite.Sprite.__init__(self)
-        #GameConfig.Y_PLATEFORM = int(map.getPolynome(x))
+        GameConfig.Y_PLATEFORM = int(map.getPolynome(x))
         self.rect = pygame.Rect(x,
                                 GameConfig.Y_PLATEFORM - GameConfig.WORMS_H,
                                 GameConfig.WORMS_W,
@@ -27,6 +27,7 @@ class Worms(pygame.sprite.Sprite):
         self.temp = 0
         self.all_bullets = pygame.sprite.Group()
         self.tirer = False
+        self.life = 100
 
 
     def draw(self,window):
@@ -175,3 +176,9 @@ class Worms(pygame.sprite.Sprite):
         displayRect = img.get_rect()
         displayRect.center = (x, y)
         window.blit(img, displayRect)
+
+    def is_death(self, value):
+        if GameConfig.LIST_WORMS[value].life <= 0:
+            GameConfig.LIST_WORMS[value].remove()
+            return True
+        return False
