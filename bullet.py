@@ -21,7 +21,6 @@ class Bullet(pygame.sprite.Sprite):
         super().__init__()
         self.worms = worms
         self.image = image
-        self.image = pygame.transform.scale(self.image,(15,15))
         self.rect = self.image.get_rect()
         self.rect.x = worms.rect.topright[0]
         self.rect.y = worms.rect.topright[1]
@@ -46,6 +45,7 @@ class Bullet(pygame.sprite.Sprite):
         self.type = type
         self.vent = vent
         self.toucherMur = False
+        self.corde = []
 
     def remove(self):
         self.worms.all_bullets.remove(self)
@@ -66,25 +66,57 @@ class Bullet(pygame.sprite.Sprite):
             self.moveRocket()
         if self.type == "grenade":
             self.moveGrenade()
+        if self.type == "corde_ninja":
+            self.moveCordeNinja()
+            for i in range(len(self.corde)):
+                window.blit(GameConfig.DIRT_BLOCK_IMG, self.corde[i])
 
 
         #vérifier si la bullet est hors écran
         #ajouter une condition que la bullet disparait qu'on un certain temps est passé
         if self.rect.x > GameConfig.WINDOW_W or self.rect.x < 0 or self.rect.y<0 or self.rect.y > 650 or time.time() - self.temp > 5 or self.toucherMur == True:
             #supprimer la bullet
-            self.remove()
+            if(self.type != "corde_ninja"):
+                self.remove()
             blockDetruit = []
+            """
+            if(self.type == "grenade" or self.type == "rocket"):
+                circle = pygame.draw.circle(window,(255,255,255),self.rect.center,30)
+                for i in range(len(GameConfig.BLOCKS)):
+                    if pygame.Rect.colliderect(circle, GameConfig.BLOCKS[i]):
+                        #blockDetruit.append(GameConfig.BLOCKS[i])
+                        GameConfig.BLOCKS_DETRUIT.append(GameConfig.BLOCKS[i])
+
+            for i in GameConfig.BLOCKS_DETRUIT:
+                #GameConfig.BLOCKS.remove(i)
+                i.y = 650
+
+            """
+
             if(self.type == "grenade" or self.type == "rocket"):
                 circle = pygame.draw.circle(window,(255,255,255),self.rect.center,40)
                 for i in range(len(GameConfig.BLOCKS)):
-                    if pygame.Rect.colliderect(circle, GameConfig.BLOCKS[i]):
-                        blockDetruit.append(GameConfig.BLOCKS[i])
+                    for y in range(len(GameConfig.BLOCKS[i])):
+                        if pygame.Rect.colliderect(circle, GameConfig.BLOCKS[i][y]):
+                            blockDetruit.append(GameConfig.BLOCKS[i][y])
+            elif self.type == "corde_ninja":
+                if pygame.mouse.get_pressed()[0] == True:
+                    pass
+                else:
+                    self.remove()
+
+
 
             for i in blockDetruit:
-                GameConfig.BLOCKS.remove(i)
+                for y in range(len(GameConfig.BLOCKS)):
+                    if(i in GameConfig.BLOCKS[y]):
+                        if(len(GameConfig.BLOCKS[y])>1):
+                            GameConfig.BLOCKS[y].remove(i)
+                        else:
+                            i.y = i.bottom + 50
 
         #vérifier si la bullet touche un autre joueur
-        if self.touch():
+        if self.touch() and self.type != "corde_ninja":
             self.remove()
             for i in range(len(GameConfig.LIST_WORMS)):
                 if self.rect.colliderect(GameConfig.LIST_WORMS[i]):
@@ -170,10 +202,21 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.x = xn + x
         self.rect.y = yn + y
         collision = False
+        """
         for i in range(len(GameConfig.BLOCKS)):
             if self.rect.colliderect(GameConfig.BLOCKS[i]) and collision == False:
                 self.chocElastique()
                 collision = True
+        for  i in range(len(GameConfig.MUR)):
+            if self.rect.colliderect(GameConfig.MUR[i])and collision == False:
+                self.chocElastique()
+                collision = True
+        """
+        for i in range(len(GameConfig.BLOCKS)):
+            for y in range(len(GameConfig.BLOCKS[i])):
+                if self.rect.colliderect(GameConfig.BLOCKS[i][y]) and collision == False:
+                    self.chocElastique()
+                    collision = True
         for  i in range(len(GameConfig.MUR)):
             if self.rect.colliderect(GameConfig.MUR[i])and collision == False:
                 self.chocElastique()
@@ -207,14 +250,22 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.x = xn + x
         self.rect.y = yn + y
 
-
+        """
         for i in range(len(GameConfig.BLOCKS)):
             if self.rect.colliderect(GameConfig.BLOCKS[i]) and self.toucherMur == False:
                 self.toucherMur = True
+        for i in range(len(GameConfig.MUR)):
+            if self.rect.colliderect(GameConfig.MUR[i]) and self.toucherMur == False:
+                self.toucherMur = True
+        """
+
+        for i in range(len(GameConfig.BLOCKS)):
+            for y in range(len(GameConfig.BLOCKS[i])):
+                if self.rect.colliderect(GameConfig.BLOCKS[i][y]) and self.toucherMur == False:
+                    self.toucherMur = True
         for  i in range(len(GameConfig.MUR)):
             if self.rect.colliderect(GameConfig.MUR[i])and self.toucherMur == False:
                 self.toucherMur = True
-
 
     def F_Gravite(self,t,vx,vy,x,y):
         return 0,GameConfig.GRAVITY,vx,vy
@@ -234,3 +285,36 @@ class Bullet(pygame.sprite.Sprite):
         return k * np.sqrt(vx2+vy2) + self.vent,\
                k * np.sqrt(vx2+vy2) + GameConfig.GRAVITY,\
                vx,vy
+
+    def moveCordeNinja(self):
+        self.corde.append(pygame.Rect(self.rect.x, self.rect.y+10, 11, 11))
+        if self.toucherMur == False:
+            self.rect.x += self.velocity
+
+            pointA = [self.x0, self.y0]
+            pointB = self.mouse_pos
+            vecteurAB = [(pointB[0] - pointA[0]), (pointB[1] - pointA[1])]
+            b = -vecteurAB[0]
+            if (b == 0):
+                b = 1
+            a = vecteurAB[1]
+            c = -(a * pointB[0]) - (b * pointB[1])
+
+            self.rect.y = (-(a * self.rect.x) - c) / b
+
+            """
+            for i in range(len(GameConfig.BLOCKS)):
+                if self.rect.colliderect(GameConfig.BLOCKS[i]) and self.toucherMur == False:
+                    self.toucherMur = True
+            for i in range(len(GameConfig.MUR)):
+                if self.rect.colliderect(GameConfig.MUR[i]) and self.toucherMur == False:
+                    self.toucherMur = True
+            """
+
+            for i in range(len(GameConfig.BLOCKS)):
+                for y in range(len(GameConfig.BLOCKS[i])):
+                    if self.rect.colliderect(GameConfig.BLOCKS[i][y]) and self.toucherMur == False:
+                        self.toucherMur = True
+            for  i in range(len(GameConfig.MUR)):
+                if self.rect.colliderect(GameConfig.MUR[i])and self.toucherMur == False:
+                    self.toucherMur = True

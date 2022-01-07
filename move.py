@@ -6,3 +6,4 @@ class Move:
         self.carabine = False
         self.rocket = False
         self.grenade = False
+        self.corde_ninja = False

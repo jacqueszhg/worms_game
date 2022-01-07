@@ -38,4 +38,6 @@ class GameState:
                         bullet.move(window)
                     # affiche la bullet
                     GameConfig.LIST_WORMS[i].all_bullets.draw(window)
+                else:
+                    GameConfig.LIST_WORMS[i].charge_position(1, 1)
 

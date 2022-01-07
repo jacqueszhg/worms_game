@@ -33,6 +33,8 @@ def get_next_move():
         next_move.rocket = True
     elif keys[pygame.K_3]:
         next_move.grenade = True
+    elif keys[pygame.K_4]:
+        next_move.corde_ninja = True
 
 
     return next_move

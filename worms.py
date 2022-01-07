@@ -84,6 +84,8 @@ class Worms(pygame.sprite.Sprite):
 
         self.weaponChoice(next_move,window)
 
+        self.charge_position(fx,fy)
+        """
         # Vitesse
         self.vx = fx * GameConfig.DT
         if self.on_ground():
@@ -103,7 +105,10 @@ class Worms(pygame.sprite.Sprite):
         #GameConfig.Y_PLATEFORM = GameConfig.BLOCKS[self.rect.left].top
         #GameConfig.Y_PLATEFORM = map.f(self.rect.left)
         #GameConfig.Y_PLATEFORM = int(map.getPolynome(self.rect.left))
-        GameConfig.Y_PLATEFORM = GameConfig.BLOCKS[self.rect.x].top
+        #GameConfig.Y_PLATEFORM = GameConfig.BLOCKS[self.rect.x].top
+        GameConfig.Y_PLATEFORM = GameConfig.BLOCKS[self.rect.x][0].top
+
+
         """
         collision = False
         indice = 0
@@ -117,12 +122,14 @@ class Worms(pygame.sprite.Sprite):
             else:
                 collision = True
         """
+
         vy_max = (GameConfig.Y_PLATEFORM - GameConfig.WORMS_H - y) / GameConfig.DT
 
         self.vy = min(self.vy, vy_max)
         self.vx = max(self.vx, vx_min)
 
         self.rect = self.rect.move(self.vx * GameConfig.DT, self.vy * GameConfig.DT)
+        """
 
     def on_ground(self):
         if(self.rect.bottom == GameConfig.Y_PLATEFORM):
@@ -136,6 +143,8 @@ class Worms(pygame.sprite.Sprite):
             self.shoot("rocket",window)
         elif(next_move.grenade):
             self.shoot("grenade",window)
+        elif next_move.corde_ninja:
+            self.shoot("corde_ninja",window)
 
     def shoot(self,weapon,window):
         mouse_pos = pygame.mouse.get_pos()
@@ -147,7 +156,7 @@ class Worms(pygame.sprite.Sprite):
         angle = (mouse_pos[0] - self.rect.x + 26, mouse_pos[1] - self.rect.y + 10)
 
         if self.tirer == False:
-            GameConfig.VENT = random.randrange(-50,50,10)
+            GameConfig.VENT = random.randrange(-20,20,2)
             self.tirer = True
 
         if(weapon == "carabine"):
@@ -169,6 +178,13 @@ class Worms(pygame.sprite.Sprite):
                 self.tirer = False
             else:
                 Bullet(10, GameConfig.BULLET_GRENADE_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT).draw(window)
+        elif weapon == "corde_ninja":
+            if pygame.mouse.get_pressed()[0] == True and len(self.all_bullets) == 0:
+                self.all_bullets.add(Bullet(10, GameConfig.BULLET_CORDE_NINJA_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT))
+                self.tirer = False
+            else:
+                Bullet(10, GameConfig.BULLET_CORDE_NINJA_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT).draw(window)
+
 
     def displayMessage(self,window, text, fontSize, x, y):
         font = pygame.font.Font('assets/font/BradBunR.ttf', fontSize)
@@ -182,3 +198,50 @@ class Worms(pygame.sprite.Sprite):
             GameConfig.LIST_WORMS[value].remove()
             return True
         return False
+
+    def charge_position(self,x,y):
+        fx = x
+        fy = y
+        # Vitesse
+        self.vx = fx * GameConfig.DT
+        if self.on_ground():
+            self.vy = fy * GameConfig.DT
+        else:
+            self.vy = self.vy + GameConfig.GRAVITY * GameConfig.DT
+
+        # Position
+        self.rect = self.rect.move(self.vx * GameConfig.DT, self.vy * GameConfig.DT)
+
+        x = self.rect.left
+        vx_min = (-x + (GameConfig.MUR_W-15))/ GameConfig.DT #peut pas sortit de l'écran à gauche
+        vx_max = ( GameConfig.WINDOW_W- GameConfig.MUR_W-GameConfig.WORMS_W - x) / GameConfig.DT #peut pas sortir de l'écran à droite
+        self.vx = min(self.vx, vx_max)
+
+        y = self.rect.top
+        #GameConfig.Y_PLATEFORM = GameConfig.BLOCKS[self.rect.left].top
+        #GameConfig.Y_PLATEFORM = map.f(self.rect.left)
+        #GameConfig.Y_PLATEFORM = int(map.getPolynome(self.rect.left))
+        #GameConfig.Y_PLATEFORM = GameConfig.BLOCKS[self.rect.x].top
+        GameConfig.Y_PLATEFORM = GameConfig.BLOCKS[self.rect.x][0].top
+
+
+        """
+        collision = False
+        indice = 0
+        while collision == False:
+            if GameConfig.BLOCKS[indice][0] == self.rect[0] and GameConfig.BLOCKS[indice].top == self.rect.bottom:
+                print("colission : ", GameConfig.BLOCKS[indice],self.rect)
+                GameConfig.Y_PLATEFORM = GameConfig.BLOCKS[indice][1]
+                collision = True
+            if(indice < len(GameConfig.BLOCKS) - 1):
+                indice = indice + 1
+            else:
+                collision = True
+        """
+
+        vy_max = (GameConfig.Y_PLATEFORM - GameConfig.WORMS_H - y) / GameConfig.DT
+
+        self.vy = min(self.vy, vy_max)
+        self.vx = max(self.vx, vx_min)
+
+        self.rect = self.rect.move(self.vx * GameConfig.DT, self.vy * GameConfig.DT)

@@ -5,7 +5,9 @@ class GameConfig:
     WINDOW_H = 650
     WINDOW_W = 1000
     Y_PLATEFORM = 516
-    BLOCKS = []
+    #BLOCKS = []
+    BLOCKS = {}
+    BLOCKS_DETRUIT = []
     MUR = []
     MUR_H = 25
     MUR_W = 25
@@ -23,7 +25,7 @@ class GameConfig:
     LIFE2 = 100
     MASSE_MUR = 20
     MASSE_GRENADE = 5
-    VENT = random.randrange(-50, 50, 10)
+    VENT = random.randrange(-20, 20, 2)
 
     def init():
 
@@ -46,5 +48,13 @@ class GameConfig:
         GameConfig.DIRT_BLOCK_IMG = pygame.transform.scale(GameConfig.DIRT_BLOCK_IMG,(20,10))
 
         GameConfig.BULLET_CARABINE_IMG = pygame.image.load('assets/bullet/bullet_carabine.png')
+        GameConfig.BULLET_CARABINE_IMG = pygame.transform.scale(GameConfig.BULLET_CARABINE_IMG,(15,15))
+
         GameConfig.BULLET_ROCKET_IMG = pygame.image.load('assets/bullet/bullet_rocket.png')
+        GameConfig.BULLET_ROCKET_IMG = pygame.transform.scale(GameConfig.BULLET_ROCKET_IMG,(15,15))
+
         GameConfig.BULLET_GRENADE_IMG = pygame.image.load('assets/bullet/bullet_grenade.png')
+        GameConfig.BULLET_GRENADE_IMG = pygame.transform.scale(GameConfig.BULLET_GRENADE_IMG,(15,15))
+
+        GameConfig.BULLET_CORDE_NINJA_IMG = pygame.image.load('assets/bullet/bullet_corde_ninja.png')
+        GameConfig.BULLET_CORDE_NINJA_IMG = pygame.transform.scale(GameConfig.BULLET_CORDE_NINJA_IMG,(30,25))
