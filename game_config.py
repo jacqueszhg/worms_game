@@ -58,3 +58,5 @@ class GameConfig:
 
         GameConfig.BULLET_CORDE_NINJA_IMG = pygame.image.load('assets/bullet/bullet_corde_ninja.png')
         GameConfig.BULLET_CORDE_NINJA_IMG = pygame.transform.scale(GameConfig.BULLET_CORDE_NINJA_IMG,(30,25))
+
+        GameConfig.STANDING_IMG_MORT = pygame.image.load('assets/worms/worms_mort.png')

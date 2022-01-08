@@ -22,15 +22,14 @@ class GameState:
             GameConfig.LIST_WORMS[i].draw(window)
             life_text = font.render(f"{GameConfig.LIST_WORMS[i].life}", 1, (0, 0, 0))
             window.blit(life_text, (GameConfig.LIST_WORMS[i].rect.x, GameConfig.LIST_WORMS[i].rect.y - 20))
-        #for i in range(len(GameConfig.LIST_WORMS)):&&&&&
-        #    if GameConfig.LIST_WORMS[i].is_death(i):
-        #        GameConfig.LIST_WORMS[i].remove()
-
+        for i in range(len(GameConfig.LIST_WORMS)):
+            if GameConfig.LIST_WORMS[i].is_dead(i):
+                GameConfig.LIST_WORMS[i].image = GameConfig.STANDING_IMG_MORT
 
 
     def advance_state(self, next_move,window):
         for i in range(len(GameConfig.LIST_WORMS)):
-            if not GameConfig.LIST_WORMS[i].is_death(i):
+            if not GameConfig.LIST_WORMS[i].is_dead(i):
                 if GameConfig.PLAY == i:
                     GameConfig.LIST_WORMS[i].advance_state(next_move, self.map, window)
                     # recuperer les projectiles du joueur

@@ -186,6 +186,8 @@ class Worms(pygame.sprite.Sprite):
                 Bullet(10, GameConfig.BULLET_CORDE_NINJA_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT).draw(window)
 
 
+
+
     def displayMessage(self,window, text, fontSize, x, y):
         font = pygame.font.Font('assets/font/BradBunR.ttf', fontSize)
         img = font.render("vent" + text, True, (255,255,255))
@@ -193,8 +195,8 @@ class Worms(pygame.sprite.Sprite):
         displayRect.center = (x, y)
         window.blit(img, displayRect)
 
-    def is_death(self, value):
-        if GameConfig.LIST_WORMS[value].life <= 0:
+    def is_dead(self, value):
+        if GameConfig.LIST_WORMS[value].life <= 0 or GameConfig.LIST_WORMS[value].rect.y >= 650:
             GameConfig.LIST_WORMS[value].remove()
             return True
         return False

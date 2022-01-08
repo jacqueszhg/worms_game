@@ -78,6 +78,15 @@ class Bullet(pygame.sprite.Sprite):
             #supprimer la bullet
             if(self.type != "corde_ninja"):
                 self.remove()
+                if GameConfig.PLAY < len(GameConfig.LIST_WORMS) - 1:
+                    GameConfig.PLAY = GameConfig.PLAY + 1
+                else:
+                    GameConfig.PLAY = 0
+                while GameConfig.LIST_WORMS[GameConfig.PLAY].is_dead(GameConfig.PLAY):
+                    if GameConfig.PLAY < len(GameConfig.LIST_WORMS) - 1:
+                        GameConfig.PLAY = GameConfig.PLAY + 1
+                    else:
+                        GameConfig.PLAY = 0
             blockDetruit = []
             """
             if(self.type == "grenade" or self.type == "rocket"):
@@ -106,7 +115,6 @@ class Bullet(pygame.sprite.Sprite):
                     self.remove()
 
 
-
             for i in blockDetruit:
                 for y in range(len(GameConfig.BLOCKS)):
                     if(i in GameConfig.BLOCKS[y]):
@@ -120,11 +128,16 @@ class Bullet(pygame.sprite.Sprite):
             self.remove()
             for i in range(len(GameConfig.LIST_WORMS)):
                 if self.rect.colliderect(GameConfig.LIST_WORMS[i]):
-                    GameConfig.LIST_WORMS[i].life = GameConfig.LIST_WORMS[i].life - 100
-                    if not GameConfig.LIST_WORMS[i].is_death(i):
-                        GameConfig.PLAY = i
-
-
+                    GameConfig.LIST_WORMS[i].life = GameConfig.LIST_WORMS[i].life - 50
+                    if GameConfig.PLAY < len(GameConfig.LIST_WORMS) - 1:
+                        GameConfig.PLAY = GameConfig.PLAY + 1
+                    else:
+                        GameConfig.PLAY = 0
+                    while GameConfig.LIST_WORMS[GameConfig.PLAY].is_dead(GameConfig.PLAY):
+                        if GameConfig.PLAY < len(GameConfig.LIST_WORMS) - 1:
+                            GameConfig.PLAY = GameConfig.PLAY + 1
+                        else:
+                            GameConfig.PLAY = 0
 
 
 
