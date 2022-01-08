@@ -21,13 +21,18 @@ class GameState:
         for i in range(len(GameConfig.LIST_WORMS)):
             GameConfig.LIST_WORMS[i].draw(window)
             life_text = font.render(f"{GameConfig.LIST_WORMS[i].life}", 1, (0, 0, 0))
-            window.blit(life_text, (GameConfig.LIST_WORMS[i].rect.x, GameConfig.LIST_WORMS[i].rect.y - 20))
+            if not GameConfig.LIST_WORMS[i].is_dead(i):
+                window.blit(life_text, (GameConfig.LIST_WORMS[i].rect.x, GameConfig.LIST_WORMS[i].rect.y - 20))
         for i in range(len(GameConfig.LIST_WORMS)):
             if GameConfig.LIST_WORMS[i].is_dead(i):
+                GameConfig.LIST_WORMS_DEAD.append(GameConfig.LIST_WORMS[i])
+                GameConfig.LIST_WORMS[i].remove()
                 GameConfig.LIST_WORMS[i].image = GameConfig.STANDING_IMG_MORT
 
 
     def advance_state(self, next_move,window):
+        for j in GameConfig.LIST_WORMS_DEAD:
+            j.charge_position(1, 1)
         for i in range(len(GameConfig.LIST_WORMS)):
             if not GameConfig.LIST_WORMS[i].is_dead(i):
                 if GameConfig.PLAY == i:

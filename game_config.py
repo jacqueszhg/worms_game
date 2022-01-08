@@ -20,6 +20,7 @@ class GameConfig:
     FORCE_JUMP = -70
     WORMS_DROIT = True
     LIST_WORMS = []
+    LIST_WORMS_DEAD = []
     PLAY = 0
     LIFE1 = 100
     LIFE2 = 100

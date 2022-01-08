@@ -197,7 +197,6 @@ class Worms(pygame.sprite.Sprite):
 
     def is_dead(self, value):
         if GameConfig.LIST_WORMS[value].life <= 0 or GameConfig.LIST_WORMS[value].rect.y >= 650:
-            GameConfig.LIST_WORMS[value].remove()
             return True
         return False
 
