@@ -137,7 +137,6 @@ class Bullet(pygame.sprite.Sprite):
                             i.y = i.bottom + 50
 
 
-
     def moveCarabine(self):
         # idée 1 tire que en ligne droite
         """
@@ -328,6 +327,3 @@ class Bullet(pygame.sprite.Sprite):
             for  i in range(len(GameConfig.MUR)):
                 if self.rect.colliderect(GameConfig.MUR[i])and self.toucherMur == False:
                     self.toucherMur = True
-
-    def mouvement_pendule(self):
-        pass

@@ -31,6 +31,9 @@ class Worms(pygame.sprite.Sprite):
         self.arme_corde_ninja = False
         self.corde = 0
 
+        self.x0 = -10
+        self.y0 = -10
+
 
     def draw(self,window):
         window.blit(self.image, self.rect)
@@ -135,7 +138,7 @@ class Worms(pygame.sprite.Sprite):
             if keys[pygame.K_e]:
                 self.rect.x += 10
 
-                pointA = [self.rect.x, self.rect.y]
+                pointA = [self.x0, self.y0]
                 pointB = self.corde.rect
                 vecteurAB = [(pointB[0] - pointA[0]), (pointB[1] - pointA[1])]
                 b = -vecteurAB[0]
@@ -204,6 +207,8 @@ class Worms(pygame.sprite.Sprite):
                 #self.all_bullets.add(Bullet(10, GameConfig.BULLET_CORDE_NINJA_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT))
                 self.all_bullets.add(self.corde)
                 self.tirer = False
+                self.x0 = self.rect.x
+                self.y0 = self.rect.y
                 self.arme_corde_ninja = True
 
             else:
@@ -269,3 +274,4 @@ class Worms(pygame.sprite.Sprite):
         self.vx = max(self.vx, vx_min)
 
         self.rect = self.rect.move(self.vx * GameConfig.DT, self.vy * GameConfig.DT)
+

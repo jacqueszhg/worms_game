@@ -28,6 +28,8 @@ class GameConfig:
     MASSE_GRENADE = 5
     VENT = random.randrange(-20, 20, 2)
 
+
+
     def init():
 
         GameConfig.BACKGROUND_IMG = pygame.image.load('assets/fond/fond_nuage.jpg')
