@@ -32,7 +32,7 @@ class GameState:
 
     def advance_state(self, next_move,window):
         for j in GameConfig.LIST_WORMS_DEAD:
-            j.charge_position(1, 1)
+            j.charge_position()
         for i in range(len(GameConfig.LIST_WORMS)):
             if not GameConfig.LIST_WORMS[i].is_dead(i):
                 if GameConfig.PLAY == i:
@@ -43,5 +43,5 @@ class GameState:
                     # affiche la bullet
                     GameConfig.LIST_WORMS[i].all_bullets.draw(window)
                 else:
-                    GameConfig.LIST_WORMS[i].charge_position(1, 1)
+                    GameConfig.LIST_WORMS[i].charge_position()
 

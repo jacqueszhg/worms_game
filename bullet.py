@@ -46,6 +46,7 @@ class Bullet(pygame.sprite.Sprite):
         self.vent = vent
         self.toucherMur = False
         self.corde = []
+        self.cordeIndice = 0
 
     def remove(self):
         self.worms.all_bullets.remove(self)
@@ -68,16 +69,19 @@ class Bullet(pygame.sprite.Sprite):
             self.moveGrenade()
         if self.type == "corde_ninja":
             self.moveCordeNinja()
+            pygame.draw.line(window, (88, 41, 0), (self.worms.rect.center[0], self.worms.rect.center[1]), self.rect.center,5)
+            """
             for i in range(len(self.corde)):
                 window.blit(GameConfig.DIRT_BLOCK_IMG, self.corde[i])
-
+            """
 
         #vérifier si la bullet est hors écran
         #ajouter une condition que la bullet disparait qu'on un certain temps est passé
-        if self.rect.x > GameConfig.WINDOW_W or self.rect.x < 0 or self.rect.y<0 or self.rect.y > 650 or time.time() - self.temp > 5 or self.toucherMur == True:
+        if self.rect.x > GameConfig.WINDOW_W or self.rect.x < 0 or self.rect.y<0 or self.rect.y > 650 or time.time() - self.temp > 5 or self.toucherMur == True or self.touch():
             #supprimer la bullet
             if(self.type != "corde_ninja"):
                 self.remove()
+
                 if GameConfig.PLAY < len(GameConfig.LIST_WORMS) - 1:
                     GameConfig.PLAY = GameConfig.PLAY + 1
                 else:
@@ -111,8 +115,21 @@ class Bullet(pygame.sprite.Sprite):
             elif self.type == "corde_ninja":
                 if pygame.mouse.get_pressed()[0] == True:
                     pass
+                    """
+                    keys = pygame.key.get_pressed()
+                    self.worms.rect.x = self.corde[self.cordeIndice].x
+                    self.worms.rect.y = self.corde[self.cordeIndice].y
+                    if self.cordeIndice < len(self.corde):
+                        self.cordeIndice = self.cordeIndice + 1
+                    if keys[pygame.K_s]:
+                        if self.cordeIndice > 1:
+                            self.cordeIndice = self.cordeIndice - 2
+                        else :
+                            self.cordeIndice = self.cordeIndice - 1
+                    """
                 else:
                     self.remove()
+
 
 
             for i in blockDetruit:
@@ -123,7 +140,6 @@ class Bullet(pygame.sprite.Sprite):
                         else:
                             i.y = i.bottom + 50
 
-        #vérifier si la bullet touche un autre joueur
         if self.touch() and self.type != "corde_ninja":
             self.remove()
             for i in range(len(GameConfig.LIST_WORMS)):
@@ -138,7 +154,6 @@ class Bullet(pygame.sprite.Sprite):
                             GameConfig.PLAY = GameConfig.PLAY + 1
                         else:
                             GameConfig.PLAY = 0
-
 
 
     def moveCarabine(self):
@@ -300,7 +315,7 @@ class Bullet(pygame.sprite.Sprite):
                vx,vy
 
     def moveCordeNinja(self):
-        self.corde.append(pygame.Rect(self.rect.x, self.rect.y+10, 11, 11))
+        #self.corde.append(pygame.Rect(self.rect.x, self.rect.y+10, 11, 11))
         if self.toucherMur == False:
             self.rect.x += self.velocity
 
@@ -331,3 +346,6 @@ class Bullet(pygame.sprite.Sprite):
             for  i in range(len(GameConfig.MUR)):
                 if self.rect.colliderect(GameConfig.MUR[i])and self.toucherMur == False:
                     self.toucherMur = True
+
+    def mouvement_pendule(self):
+        pass

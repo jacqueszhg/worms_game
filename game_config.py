@@ -33,6 +33,9 @@ class GameConfig:
         GameConfig.BACKGROUND_IMG = pygame.image.load('assets/fond/fond_nuage.jpg')
         GameConfig.BACKGROUND_IMG = pygame.transform.scale(GameConfig.BACKGROUND_IMG,(1000,650))
 
+        GameConfig.CURSOR_IMG = pygame.image.load('assets/cursor.png')
+        GameConfig.CURSOR_IMG = pygame.transform.scale(GameConfig.CURSOR_IMG,(15,15))
+
         GameConfig.STANDING_IMG_GAUCHE = pygame.image.load('assets/worms/worms_statique.png')
         GameConfig.STANDING_IMG_DROIT = pygame.transform.flip(GameConfig.STANDING_IMG_GAUCHE,True,False)
 

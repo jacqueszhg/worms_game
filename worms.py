@@ -28,6 +28,8 @@ class Worms(pygame.sprite.Sprite):
         self.all_bullets = pygame.sprite.Group()
         self.tirer = False
         self.life = 100
+        self.arme_corde_ninja = False
+        self.corde = 0
 
 
     def draw(self,window):
@@ -84,8 +86,6 @@ class Worms(pygame.sprite.Sprite):
 
         self.weaponChoice(next_move,window)
 
-        self.charge_position(fx,fy)
-        """
         # Vitesse
         self.vx = fx * GameConfig.DT
         if self.on_ground():
@@ -129,7 +129,23 @@ class Worms(pygame.sprite.Sprite):
         self.vx = max(self.vx, vx_min)
 
         self.rect = self.rect.move(self.vx * GameConfig.DT, self.vy * GameConfig.DT)
-        """
+
+        if self.arme_corde_ninja == True:
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_e]:
+                self.rect.x += 10
+
+                pointA = [self.rect.x, self.rect.y]
+                pointB = self.corde.rect
+                vecteurAB = [(pointB[0] - pointA[0]), (pointB[1] - pointA[1])]
+                b = -vecteurAB[0]
+                if (b == 0):
+                    b = 1
+                a = vecteurAB[1]
+                c = -(a * pointB[0]) - (b * pointB[1])
+                self.rect.y = (-(a * self.rect.x) - c) / b
+            if keys[pygame.K_s]:
+                print("descen")
 
     def on_ground(self):
         if(self.rect.bottom == GameConfig.Y_PLATEFORM):
@@ -138,12 +154,16 @@ class Worms(pygame.sprite.Sprite):
 
     def weaponChoice(self,next_move,window):
         if(next_move.carabine):
+            self.arme_corde_ninja = False
             self.shoot("carabine",window)
         elif(next_move.rocket):
+            self.arme_corde_ninja = False
             self.shoot("rocket",window)
         elif(next_move.grenade):
+            self.arme_corde_ninja = False
             self.shoot("grenade",window)
         elif next_move.corde_ninja:
+            self.arme_corde_ninja = True
             self.shoot("corde_ninja",window)
 
     def shoot(self,weapon,window):
@@ -180,8 +200,12 @@ class Worms(pygame.sprite.Sprite):
                 Bullet(10, GameConfig.BULLET_GRENADE_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT).draw(window)
         elif weapon == "corde_ninja":
             if pygame.mouse.get_pressed()[0] == True and len(self.all_bullets) == 0:
-                self.all_bullets.add(Bullet(10, GameConfig.BULLET_CORDE_NINJA_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT))
+                self.corde = Bullet(10, GameConfig.BULLET_CORDE_NINJA_IMG, self, mouse_pos, weapon, angle, GameConfig.VENT)
+                #self.all_bullets.add(Bullet(10, GameConfig.BULLET_CORDE_NINJA_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT))
+                self.all_bullets.add(self.corde)
                 self.tirer = False
+                self.arme_corde_ninja = True
+
             else:
                 Bullet(10, GameConfig.BULLET_CORDE_NINJA_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT).draw(window)
 
@@ -200,13 +224,12 @@ class Worms(pygame.sprite.Sprite):
             return True
         return False
 
-    def charge_position(self,x,y):
-        fx = x
-        fy = y
+    def charge_position(self):
+
         # Vitesse
-        self.vx = fx * GameConfig.DT
+        self.vx = 1 * GameConfig.DT
         if self.on_ground():
-            self.vy = fy * GameConfig.DT
+            self.vy = 1 * GameConfig.DT
         else:
             self.vy = self.vy + GameConfig.GRAVITY * GameConfig.DT
 
@@ -223,7 +246,7 @@ class Worms(pygame.sprite.Sprite):
         #GameConfig.Y_PLATEFORM = map.f(self.rect.left)
         #GameConfig.Y_PLATEFORM = int(map.getPolynome(self.rect.left))
         #GameConfig.Y_PLATEFORM = GameConfig.BLOCKS[self.rect.x].top
-        GameConfig.Y_PLATEFORM = GameConfig.BLOCKS[self.rect.x][0].top
+        a = GameConfig.BLOCKS[self.rect.x][0].top
 
 
         """
@@ -240,7 +263,7 @@ class Worms(pygame.sprite.Sprite):
                 collision = True
         """
 
-        vy_max = (GameConfig.Y_PLATEFORM - GameConfig.WORMS_H - y) / GameConfig.DT
+        vy_max = (a - GameConfig.WORMS_H - y) / GameConfig.DT
 
         self.vy = min(self.vy, vy_max)
         self.vx = max(self.vx, vx_min)

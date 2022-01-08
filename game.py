@@ -9,6 +9,7 @@ def game_loop(window):
     game_state = GameState()
     while not quitting :
         game_state.draw(window)
+        souris(window)
         for event in pygame.event.get() :
             if event.type == pygame.QUIT :
                 quitting = True
@@ -39,6 +40,12 @@ def get_next_move():
 
     return next_move
 
+def souris(window):
+    pygame.mouse.set_visible(False)
+    cursor = GameConfig.CURSOR_IMG.get_rect()
+    # in your main loop update the position every frame and blit the image
+    cursor.center = pygame.mouse.get_pos()  # update position
+    window.blit(GameConfig.CURSOR_IMG, cursor)  # draw the cursor
 
 # Fonction principale
 def main() :
