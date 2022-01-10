@@ -79,7 +79,7 @@ class Bullet(pygame.sprite.Sprite):
 
         #vérifier si la bullet est hors écran
         #ajouter une condition que la bullet disparait qu'on un certain temps est passé
-        if self.rect.x > GameConfig.WINDOW_W or self.rect.x < 0 or self.rect.y<0 or self.rect.y > 650 or time.time() - self.temp > 5 or self.toucherMur == True or self.touch():
+        if self.rect.x > GameConfig.WINDOW_W or self.rect.x < 0 or self.rect.y<0 or self.rect.y > GameConfig.WINDOW_H or time.time() - self.temp > 5 or self.toucherMur == True or self.touch():
             #supprimer la bullet
             if(self.type != "corde_ninja"):
                 self.remove()
@@ -114,11 +114,9 @@ class Bullet(pygame.sprite.Sprite):
                     if pygame.Rect.colliderect(circle, GameConfig.LIST_WORMS[i]):
                         absolute_x = GameConfig.LIST_WORMS[i].rect.x-circle.centerx
                         absolute_y = GameConfig.LIST_WORMS[i].rect.y-circle.centery
-                        print(GameConfig.LIST_WORMS[i].rect.x, GameConfig.LIST_WORMS[i].rect.y)
-                        print(circle.centerx, circle.centery)
-                        print(absolute_x, absolute_y)
                         distance = pow(pow(absolute_x, 2)+pow(absolute_y, 2), 0.5)
                         degat_nade = int((80 - distance)/2)
+                        print(degat_nade)
                         GameConfig.LIST_WORMS[i].life = GameConfig.LIST_WORMS[i].life - degat_nade
 
 

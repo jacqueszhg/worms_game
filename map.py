@@ -8,10 +8,11 @@ from game_config import *
 
 class Map:
     def __init__(self):
-        self.px = [0,200,300,640,650,999,1000]
+        #self.px = [0,200,300,640,650,999,1000, 1200, 1450, 1715, 1800, 1920]
+        self.px = [0,200,250,400,450,600,650,750,900,950,1100,1300,1400,1500,1650,1750,1800,1920]
         self.py = [self.f(e) for e in self.px]
         self.polynome = self.get_poly_lagrange(self.px,self.py)
-        self.matrice_map = np.array([
+        '''self.matrice_map = np.array([
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -38,11 +39,19 @@ class Map:
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        ])
+        ])'''
+
+        self.matrice_map = np.zeros((int(GameConfig.WINDOW_H/25)+1, int(GameConfig.WINDOW_W/25)+1))
+        for i in range(len(self.matrice_map[0])):
+            self.matrice_map[0][i] = 1
+        nbligne, nbcolonne = self.matrice_map.shape
+        for i in range(1, nbligne):
+            self.matrice_map[i][0] = 1
+            self.matrice_map[i][-1] = 1
 
         # Ajoute dans un tableau tout les blocs crées
-        for ligne in range(26):
-            for colonne in range(40):
+        for ligne in range(nbligne):
+            for colonne in range(nbcolonne):
                 block = self.matrice_map[ligne][colonne]
                 if block == 1:
                     GameConfig.MUR.append(pygame.Rect(colonne * GameConfig.MUR_W, ligne * GameConfig.MUR_H, GameConfig.MUR_W,GameConfig.MUR_H))
@@ -113,12 +122,13 @@ class Map:
 
         #p = self.get_poly_lagrange(self.px, self.py)
 
-        x = np.linspace(0, GameConfig.WINDOW_W, 1000)
+        x = np.linspace(0, GameConfig.WINDOW_W, GameConfig.WINDOW_W)
         yp = nppol.polyval(x, self.polynome)
         return x,yp
 
     def createMap(self):
         x,y = self.fonction_principale()
+        print(x, y)
         for ligne in range(len(x)):
             #GameConfig.BLOCKS.append(pygame.Rect(x[ligne],y[ligne],GameConfig.WINDOW_W/100,GameConfig.WINDOW_W/100))
             GameConfig.BLOCKS[ligne] = []
@@ -156,7 +166,7 @@ class Map:
             window.blit(g,GameConfig.MUR[i])
 
     def f(sellf,x):
-        return 5 * x * np.sin(x)/200+600
+        return 5 * x * np.sin(x)/200+1000
 
     def f2(self,x):
         return 5 * x * np.sin(x)/200+100

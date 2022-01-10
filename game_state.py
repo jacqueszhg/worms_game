@@ -9,10 +9,9 @@ class GameState:
     def __init__(self):
         self.map = Map()
         self.map.createMap()
-        GameConfig.LIST_WORMS.append(Worms(20, self.map))
-        GameConfig.LIST_WORMS.append(Worms(500, self.map))
+        GameConfig.LIST_WORMS.append(Worms(85, self.map))
         GameConfig.LIST_WORMS.append(Worms(750, self.map))
-
+        GameConfig.LIST_WORMS.append(Worms(1500, self.map))
 
 
     def draw(self,window):

@@ -2,8 +2,8 @@ import pygame
 import random
 
 class GameConfig:
-    WINDOW_H = 650
-    WINDOW_W = 1000
+    WINDOW_H = 1080
+    WINDOW_W = 1920
     Y_PLATEFORM = 516
     #BLOCKS = []
     BLOCKS = {}
@@ -33,7 +33,7 @@ class GameConfig:
     def init():
 
         GameConfig.BACKGROUND_IMG = pygame.image.load('assets/fond/fond_nuage.jpg')
-        GameConfig.BACKGROUND_IMG = pygame.transform.scale(GameConfig.BACKGROUND_IMG,(1000,650))
+        GameConfig.BACKGROUND_IMG = pygame.transform.scale(GameConfig.BACKGROUND_IMG,(GameConfig.WINDOW_W,GameConfig.WINDOW_H))
 
         GameConfig.CURSOR_IMG = pygame.image.load('assets/cursor.png')
         GameConfig.CURSOR_IMG = pygame.transform.scale(GameConfig.CURSOR_IMG,(15,15))

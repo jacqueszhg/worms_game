@@ -225,7 +225,7 @@ class Worms(pygame.sprite.Sprite):
         window.blit(img, displayRect)
 
     def is_dead(self, value):
-        if GameConfig.LIST_WORMS[value].life <= 0 or GameConfig.LIST_WORMS[value].rect.y >= 610:
+        if GameConfig.LIST_WORMS[value].life <= 0 or GameConfig.LIST_WORMS[value].rect.y >= GameConfig.WINDOW_H-40:
             return True
         return False
 
