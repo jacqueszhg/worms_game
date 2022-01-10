@@ -62,6 +62,7 @@ class Bullet(pygame.sprite.Sprite):
         return False
 
     def move(self,window):
+        global degat
         if(self.type == "carabine"):
             self.moveCarabine()
         if self.type =="rocket":
@@ -82,10 +83,11 @@ class Bullet(pygame.sprite.Sprite):
             #supprimer la bullet
             if(self.type != "corde_ninja"):
                 self.remove()
+                Round.next_round()
+            if(self.type == "carabine"):
                 for i in range(len(GameConfig.LIST_WORMS)):
                     if self.rect.colliderect(GameConfig.LIST_WORMS[i]):
-                        GameConfig.LIST_WORMS[i].life = GameConfig.LIST_WORMS[i].life - 50
-                Round.next_round()
+                        GameConfig.LIST_WORMS[i].life = GameConfig.LIST_WORMS[i].life - 40
 
             blockDetruit = []
             """
@@ -108,6 +110,19 @@ class Bullet(pygame.sprite.Sprite):
                     for y in range(len(GameConfig.BLOCKS[i])):
                         if pygame.Rect.colliderect(circle, GameConfig.BLOCKS[i][y]):
                             blockDetruit.append(GameConfig.BLOCKS[i][y])
+                for i in range(len(GameConfig.LIST_WORMS)):
+                    if pygame.Rect.colliderect(circle, GameConfig.LIST_WORMS[i]):
+                        absolute_x = GameConfig.LIST_WORMS[i].rect.x-circle.centerx
+                        absolute_y = GameConfig.LIST_WORMS[i].rect.y-circle.centery
+                        print(GameConfig.LIST_WORMS[i].rect.x, GameConfig.LIST_WORMS[i].rect.y)
+                        print(circle.centerx, circle.centery)
+                        print(absolute_x, absolute_y)
+                        distance = pow(pow(absolute_x, 2)+pow(absolute_y, 2), 0.5)
+                        degat_nade = int((80 - distance)/2)
+                        GameConfig.LIST_WORMS[i].life = GameConfig.LIST_WORMS[i].life - degat_nade
+
+
+
             elif self.type == "corde_ninja":
                 if pygame.mouse.get_pressed()[0] == True:
                     pass

@@ -3,6 +3,7 @@ from worms import *
 from game_config import *
 from map import *
 from game_config import *
+from round import *
 
 class GameState:
     def __init__(self):
@@ -30,6 +31,7 @@ class GameState:
                 GameConfig.LIST_WORMS[i].image = GameConfig.STANDING_IMG_MORT
 
 
+
     def advance_state(self, next_move,window):
         for j in GameConfig.LIST_WORMS_DEAD:
             j.charge_position()
@@ -44,6 +46,7 @@ class GameState:
                     GameConfig.LIST_WORMS[i].all_bullets.draw(window)
                 else:
                     GameConfig.LIST_WORMS[i].charge_position()
+
 
 
 
