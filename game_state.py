@@ -39,6 +39,8 @@ class GameState:
             if not GameConfig.LIST_WORMS[i].is_dead(i):
                 if GameConfig.PLAY == i:
                     GameConfig.LIST_WORMS[i].advance_state(next_move, self.map, window)
+                    if GameConfig.LIST_WORMS[i].is_dead(i):
+                        Round.next_round()
                     # recuperer les projectiles du joueur
                     for bullet in GameConfig.LIST_WORMS[i].all_bullets:
                         bullet.move(window)
