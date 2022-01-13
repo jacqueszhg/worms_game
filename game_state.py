@@ -56,9 +56,13 @@ class GameState:
                 nbMort = nbMort + 1
 
         # Si il ne reste plus que 1 worms en vie alors on affiche le menu de fin
-        if(nbMort == len(GameConfig.LIST_WORMS)-1):
-            GameConfig.displayMessage(window, "VOUS AVEZ GAGNEZ", 100, int(GameConfig.WINDOW_W / 2),
-                                      int(GameConfig.WINDOW_H / 2)-100)
+        if(nbMort == len(GameConfig.LIST_WORMS)-1 or nbMort == len(GameConfig.LIST_WORMS)):
+            if nbMort == nbMort == len(GameConfig.LIST_WORMS)-1:
+                GameConfig.displayMessage(window, "VOUS AVEZ GAGNEZ", 100, int(GameConfig.WINDOW_W / 2),
+                                          int(GameConfig.WINDOW_H / 2)-100)
+            else:
+                GameConfig.displayMessage(window, "EGALITE", 100, int(GameConfig.WINDOW_W / 2),
+                                          int(GameConfig.WINDOW_H / 2)-100)
             GameConfig.displayMessage(window, "APPUYER SUR ENTRER POUR REJOUER", 80, int(GameConfig.WINDOW_W / 2),
                                   int(GameConfig.WINDOW_H / 2))
             GameConfig.displayMessage(window, "APPUYER SUR ECHAP POUR QUITTER", 80, int(GameConfig.WINDOW_W / 2),
