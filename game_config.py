@@ -10,14 +10,6 @@ class GameConfig:
     BLOCKS_DETRUIT = []
     BLOCK_W =  int(WINDOW_W/100)
     BLOCK_H =  int(WINDOW_W/100)
-    """
-    BLOCK2 = [None] * WINDOW_W
-
-    for i in range(len(BLOCK2)):
-        tmp = [None] * WINDOW_H
-        BLOCK2[i] = tmp
-        """
-
     MUR = []
     MUR_H = 25
     MUR_W = 25
@@ -96,7 +88,14 @@ class GameConfig:
         displayRect.center = (x, y)
         window.blit(img, displayRect)
 
+    def pgcd(a,b):
+        d = 1
+        while a != b:
+            d = abs(b - a)
+            b = a
+            a = d
+        return d
 GameConfig.euleur = staticmethod(GameConfig.euleur)
 GameConfig.mouvement_pendulaire = staticmethod(GameConfig.mouvement_pendulaire)
 GameConfig.displayMessage = staticmethod(GameConfig.displayMessage)
-
+GameConfig.pgcd = staticmethod(GameConfig.pgcd)

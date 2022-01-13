@@ -15,7 +15,9 @@ class Round:
             else:
                 GameConfig.PLAY = 0
         """
-        if GameConfig.PLAY + 1 < len(GameConfig.LIST_WORMS):
+        if GameConfig.LIST_WORMS[GameConfig.PLAY].arme_corde_ninja == True:
+            GameConfig.PLAY = GameConfig.PLAY
+        elif GameConfig.PLAY + 1 < len(GameConfig.LIST_WORMS):
             GameConfig.PLAY = GameConfig.PLAY + 1
         else:
             GameConfig.PLAY = 0
