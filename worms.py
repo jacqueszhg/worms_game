@@ -212,6 +212,7 @@ class Worms(pygame.sprite.Sprite):
                 Bullet(10, GameConfig.BULLET_CORDE_NINJA_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT).draw(window)
 
 
+    # Methode qui retourne True si le worms est mort et retourne False si il est vivant
     def is_dead(self):
         if self.life <= 0 or self.rect.bottom >= GameConfig.WINDOW_H:
             self.image = GameConfig.STANDING_IMG_MORT

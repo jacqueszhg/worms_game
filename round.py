@@ -3,6 +3,7 @@ from game_config import *
 from worms import *
 
 class Round:
+    #Methode qui permet de dire quel worms joue et de passer au tour suivant
     def next_round():
         """
         if GameConfig.PLAY < len(GameConfig.LIST_WORMS) :

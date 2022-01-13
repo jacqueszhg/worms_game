@@ -15,7 +15,7 @@ class GameState:
         GameConfig.LIST_WORMS.append(Worms(200, self.map))
         GameConfig.LIST_WORMS.append(Worms(300, self.map))
 
-
+    # Methode qui créer la map et qui affiche les worms vivant / morts
     def draw(self,window):
         window.blit(GameConfig.BACKGROUND_IMG,(0,0))
         self.map.draw(window)
@@ -24,6 +24,7 @@ class GameState:
             GameConfig.LIST_WORMS[i].draw(window)
 
     def advance_state(self, next_move,window):
+        # Permet de modifier la position du joueur mort pour que l'image des worms morts suivent la position du terrain si celui-ci se détruit
         for j in GameConfig.LIST_WORMS_DEAD:
             j.charge_position()
 
