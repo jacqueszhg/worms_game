@@ -110,6 +110,8 @@ class Bullet(pygame.sprite.Sprite):
                     for y in range(len(GameConfig.BLOCKS[i])):
                         if pygame.Rect.colliderect(circle, GameConfig.BLOCKS[i][y]):
                             blockDetruit.append(GameConfig.BLOCKS[i][y])
+                # Calcul de la distance entre le centre de l'explosion et joueur pour effectuer des dégâts adaptatif.
+                # Utilisation de la formule de la distance entre 2 points qui est expliqué dans le rapport
                 for i in range(len(GameConfig.LIST_WORMS)):
                     if pygame.Rect.colliderect(circle, GameConfig.LIST_WORMS[i]):
                         absolute_x = GameConfig.LIST_WORMS[i].rect.x-circle.centerx

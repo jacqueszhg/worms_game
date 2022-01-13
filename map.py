@@ -50,7 +50,7 @@ class Map:
         else:
             W = int(GameConfig.WINDOW_W/25) + 1
 
-
+        # Création de la matrice pour la map avec les blocks sur le tour de la map
         self.matrice_map = np.zeros((int(H), int(W)))
         for i in range(len(self.matrice_map[0])):
             self.matrice_map[0][i] = 1
