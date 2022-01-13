@@ -27,18 +27,37 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.y = worms.rect.topright[1]
         self.y_origine = self.rect.y
         self.mouse_pos = mouse_pos
+
+        #Calcule distance pour la vitesse
+        absolute_x = self.rect.x - mouse_pos[0]
+        absolute_y = self.rect.y - mouse_pos[1]
+        distance = (pow(pow(absolute_x, 2) + pow(absolute_y, 2), 0.5))/10
+        if(distance > 50):
+            distance = 50
         #vitesse initiale
         if(self.mouse_pos < (self.worms.rect.x,self.worms.rect.y)):
-            self.velocity = -velocity
+            self.velocity = -distance
             self.rect.x = worms.rect.topleft[0] - 15
             self.rect.y = worms.rect.topleft[1]
         else:
-            self.velocity = velocity
+            self.velocity = distance
 
         self.x0 = self.rect.x
         self.y0 = self.rect.y
-        #self.vx = velocity * np.cos(angle)
-        #self.vy = velocity * np.sin(angle)
+        print(angle)
+        if angle[0] < -100:
+            angle[0] = -100
+            if angle[1] < 100:
+                angle[1] = 100
+            elif angle[1] > -100:
+                angle[1] = -100
+        if angle[0] > 100:
+            angle[0] = 100
+            if angle[1] < -100:
+                angle[1] = -100
+            elif angle[1] > 100:
+                angle[1] = 100
+        #vitesse de dire pour la grenade et le rocket
         self.vx = angle[0]
         self.vy = angle[1]
 
@@ -46,8 +65,6 @@ class Bullet(pygame.sprite.Sprite):
         self.type = type
         self.vent = vent
         self.toucherMur = False
-        self.corde = []
-        self.cordeIndice = 0
 
     def remove(self):
         self.worms.jouer = True
@@ -73,10 +90,7 @@ class Bullet(pygame.sprite.Sprite):
         if self.type == "corde_ninja":
             self.moveCordeNinja()
             pygame.draw.line(window, (88, 41, 0), (self.worms.rect.center[0], self.worms.rect.center[1]), self.rect.center,5)
-            """
-            for i in range(len(self.corde)):
-                window.blit(GameConfig.DIRT_BLOCK_IMG, self.corde[i])
-            """
+
 
         #vérifier si la bullet est hors écran
         #ajouter une condition que la bullet disparait qu'on un certain temps est passé
@@ -90,20 +104,6 @@ class Bullet(pygame.sprite.Sprite):
                         GameConfig.LIST_WORMS[i].life = GameConfig.LIST_WORMS[i].life - 40
 
             blockDetruit = []
-            """
-            if(self.type == "grenade" or self.type == "rocket"):
-                circle = pygame.draw.circle(window,(255,255,255),self.rect.center,30)
-                for i in range(len(GameConfig.BLOCKS)):
-                    if pygame.Rect.colliderect(circle, GameConfig.BLOCKS[i]):
-                        #blockDetruit.append(GameConfig.BLOCKS[i])
-                        GameConfig.BLOCKS_DETRUIT.append(GameConfig.BLOCKS[i])
-
-            for i in GameConfig.BLOCKS_DETRUIT:
-                #GameConfig.BLOCKS.remove(i)
-                i.y = 650
-
-            """
-
             if(self.type == "grenade" or self.type == "rocket"):
                 circle = pygame.draw.circle(window,(255,255,255),self.rect.center,40)
                 for i in range(len(GameConfig.BLOCKS)):
@@ -126,20 +126,9 @@ class Bullet(pygame.sprite.Sprite):
             elif self.type == "corde_ninja":
                 if pygame.mouse.get_pressed()[0] == True:
                     pass
-                    """
-                    keys = pygame.key.get_pressed()
-                    self.worms.rect.x = self.corde[self.cordeIndice].x
-                    self.worms.rect.y = self.corde[self.cordeIndice].y
-                    if self.cordeIndice < len(self.corde):
-                        self.cordeIndice = self.cordeIndice + 1
-                    if keys[pygame.K_s]:
-                        if self.cordeIndice > 1:
-                            self.cordeIndice = self.cordeIndice - 2
-                        else :
-                            self.cordeIndice = self.cordeIndice - 1
-                    """
                 else:
                     self.remove()
+                    self.toucherMur = False
 
 
 
@@ -153,43 +142,6 @@ class Bullet(pygame.sprite.Sprite):
 
 
     def moveCarabine(self):
-        # idée 1 tire que en ligne droite
-        """
-        self.rect.x += self.velocity
-        self.rect.y = self.m * self.rect.x + self.y_origine
-        self.rect.x += self.velocity
-        """
-
-        # idée 2 pas réussie à mettre en oeuvre
-        """
-        vx = 0
-        vy = 0
-        ax = 0
-        ay = -GameConfig.GRAVITY
-        dt = 1
-
-        vx += ax * dt
-        vy += ay * dt
-        self.rect.x += vx * dt
-        self.rect.y += vy * dt
-        print(self.rect.x,self.rect.y)
-        """
-
-        # idée 3 equation cartésienne foncitonne mais quelque soucis
-        """
-        self.rect.x += self.velocity
-
-        pointA = [self.x0,self.y0]
-        pointB = self.mouse_pos
-        vecteurAB = [(pointB[0] - pointA[0]),(pointB[1]-pointA[1])]
-        b = -vecteurAB[0]
-        if(b ==0):
-            b=1
-        a =vecteurAB[1]
-        c = -(a*pointB[0]) - (b*pointB[1])
-        self.rect.y = (-(a * self.rect.x)-c)/b
-        """
-
         # mélange idée 3 et 2 fonction mais queleque soucis
         self.rect.x += self.velocity
 
@@ -218,29 +170,8 @@ class Bullet(pygame.sprite.Sprite):
         vx,vy,x,y = self.F_Gravite_Friction_Vent(t,vxn,vyn,xn,yn)
         self.vx,self.vy,self.rect.x,self.rect.y = GameConfig.euleur(t,vx,vy,x,y,vxn,vyn,xn,yn,dt)
 
-        """
-        vx = dt * vx
-        vy = dt * vy
-        x = dt * x
-        y = dt * y
-
-        self.vx = vxn + vx
-        self.vy = vyn + vy
-        self.rect.x = xn + x
-        self.rect.y = yn + y
-        """
-
         collision = False
-        """
-        for i in range(len(GameConfig.BLOCKS)):
-            if self.rect.colliderect(GameConfig.BLOCKS[i]) and collision == False:
-                self.chocElastique()
-                collision = True
-        for  i in range(len(GameConfig.MUR)):
-            if self.rect.colliderect(GameConfig.MUR[i])and collision == False:
-                self.chocElastique()
-                collision = True
-        """
+
         for i in range(len(GameConfig.BLOCKS)):
             for y in range(len(GameConfig.BLOCKS[i])):
                 if self.rect.colliderect(GameConfig.BLOCKS[i][y]) and collision == False:
@@ -257,8 +188,6 @@ class Bullet(pygame.sprite.Sprite):
          newVy = ((GameConfig.MASSE_GRENADE - GameConfig.MASSE_MUR)/(GameConfig.MASSE_GRENADE + GameConfig.MASSE_MUR)) * (self.vy)
          self.vx = newVx
          self.vy = newVy
-         #self.vx = -self.vx * 1 / 3
-         #self.vy = -self.vy * 1/3
 
     def moveRocket(self):
         dt = 0.3
@@ -273,29 +202,6 @@ class Bullet(pygame.sprite.Sprite):
         #vx,vy,x,y = self.F_Gravite_Friction(t,vxn,vyn,xn,yn)
         vx,vy,x,y = self.F_Gravite_Friction_Vent(t,vxn,vyn,xn,yn)
         self.vx,self.vy,self.rect.x,self.rect.y = GameConfig.euleur(t,vx,vy,x,y,vxn,vyn,xn,yn,dt)
-        """
-        vx = dt * vx
-        vy = dt * vy
-        x = dt * x
-        y = dt * y
-        """
-        """
-
-        vx,vy,x,y = self.euleur(t,vx,vy,x,y,dt)
-        self.vx = vxn + vx
-        self.vy = vyn + vy
-        self.rect.x = xn + x
-        self.rect.y = yn + y
-        """
-
-        """
-        for i in range(len(GameConfig.BLOCKS)):
-            if self.rect.colliderect(GameConfig.BLOCKS[i]) and self.toucherMur == False:
-                self.toucherMur = True
-        for i in range(len(GameConfig.MUR)):
-            if self.rect.colliderect(GameConfig.MUR[i]) and self.toucherMur == False:
-                self.toucherMur = True
-        """
 
         for i in range(len(GameConfig.BLOCKS)):
             for y in range(len(GameConfig.BLOCKS[i])):
@@ -325,7 +231,6 @@ class Bullet(pygame.sprite.Sprite):
                vx,vy
 
     def moveCordeNinja(self):
-        #self.corde.append(pygame.Rect(self.rect.x, self.rect.y+10, 11, 11))
         if self.toucherMur == False:
             self.rect.x += self.velocity
 
@@ -339,15 +244,6 @@ class Bullet(pygame.sprite.Sprite):
             c = -(a * pointB[0]) - (b * pointB[1])
 
             self.rect.y = (-(a * self.rect.x) - c) / b
-
-            """
-            for i in range(len(GameConfig.BLOCKS)):
-                if self.rect.colliderect(GameConfig.BLOCKS[i]) and self.toucherMur == False:
-                    self.toucherMur = True
-            for i in range(len(GameConfig.MUR)):
-                if self.rect.colliderect(GameConfig.MUR[i]) and self.toucherMur == False:
-                    self.toucherMur = True
-            """
 
             for i in range(len(GameConfig.BLOCKS)):
                 for y in range(len(GameConfig.BLOCKS[i])):

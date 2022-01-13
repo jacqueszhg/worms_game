@@ -3,11 +3,16 @@ from game_config import *
 from game_state import *
 from move import *
 
-
+"""
+Fonction qui fait boucler le jeu, jusqu'a sa terminaise
+"""
 def game_loop(window):
+    # Variable pour savoir si on continue, restart ou quitte le jeu
     quitting = False
-    game_state = GameState()
     fin = 0
+
+    #instance de la classe GameState() permet de controler le dérouelemnt du jeu
+    game_state = GameState()
     while not quitting and fin == 0:
         game_state.draw(window)
         souris(window)
@@ -20,7 +25,9 @@ def game_loop(window):
         pygame.display.update()
     return fin
 
-
+"""
+Fonction pour connaitre la prochaine action du joueur courant
+"""
 def get_next_move():
     next_move = Move()
     keys = pygame.key.get_pressed()
@@ -42,6 +49,9 @@ def get_next_move():
 
     return next_move
 
+"""
+Fonction qui permet de changer le style de notre curseur
+"""
 def souris(window):
     pygame.mouse.set_visible(False)
     cursor = GameConfig.CURSOR_IMG.get_rect()
@@ -49,9 +59,11 @@ def souris(window):
     cursor.center = pygame.mouse.get_pos()  # update position
     window.blit(GameConfig.CURSOR_IMG, cursor)  # draw the cursor
 
+"""
+Fonction qui remet à zéro les variables de jeu
+"""
 def resetGame():
     GameConfig.LIST_WORMS = []
-    GameConfig.LIST_WORMS_DEAD = []
     GameConfig.BLOCKS = {}
     GameConfig.BLOCKS_DETRUIT = {}
     GameConfig.PLAY = 0

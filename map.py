@@ -9,7 +9,15 @@ from game_config import *
 class Map:
     def __init__(self):
         #self.px = [0,200,300,640,650,999,1000, 1200, 1450, 1715, 1800, 1920]
-        self.px = [0,200,250,400,450,600,650,750,900,950,1100,1300,1400,1500,1650,1750,1800,1920]
+        #self.px = [0,200,250,400,450,600,650,750,900,950,1100,1300,1400,1500,1650,1750,1800,1920]
+        self.px = [0,
+                   random.randrange(100, 200),
+                   random.randrange(100, 200),
+                   random.randrange(500, 600),
+                   random.randrange(500, 600),
+                   random.randrange(GameConfig.WINDOW_W - 300, GameConfig.WINDOW_W - 200),
+                   random.randrange(GameConfig.WINDOW_W - 300, GameConfig.WINDOW_W - 200),
+                   GameConfig.WINDOW_W]
         self.py = [self.f(e) for e in self.px]
         self.polynome = self.get_poly_lagrange(self.px,self.py)
         '''self.matrice_map = np.array([
@@ -139,17 +147,8 @@ class Map:
     def createMap(self):
         x,y = self.fonction_principale()
         for ligne in range(len(x)):
-            #GameConfig.BLOCKS.append(pygame.Rect(x[ligne],y[ligne],GameConfig.WINDOW_W/100,GameConfig.WINDOW_W/100))
             GameConfig.BLOCKS[ligne] = []
             GameConfig.BLOCKS[ligne].append(pygame.Rect(x[ligne],y[ligne],GameConfig.WINDOW_W/100,GameConfig.WINDOW_W/100))
-
-        """
-        for ligne in range(0,GameConfig.WINDOW_W,11):
-            x = GameConfig.BLOCKS[ligne].x
-            y = GameConfig.BLOCKS[ligne].y
-            for colonne in range(y,GameConfig.WINDOW_H,11):
-                GameConfig.BLOCKS.append(pygame.Rect(x, colonne,11,11))
-        """
 
         for ligne in range(0,GameConfig.WINDOW_W,11):
             for i in range(len(GameConfig.BLOCKS[ligne])):
@@ -159,12 +158,6 @@ class Map:
                     GameConfig.BLOCKS[ligne].append(pygame.Rect(x, colonne,11,11))
 
     def draw(self,window):
-        """
-        for i in range(len(GameConfig.BLOCKS)):
-            g = pygame.transform.scale(GameConfig.DIRT_BLOCK_IMG, (GameConfig.BLOCKS[i][2], GameConfig.BLOCKS[i][3]))
-            window.blit(g,GameConfig.BLOCKS[i])
-        """
-
         for i in range(len(GameConfig.BLOCKS)):
             for y in range (len(GameConfig.BLOCKS[i])):
                 g = pygame.transform.scale(GameConfig.DIRT_BLOCK_IMG, (GameConfig.BLOCKS[i][y][2], GameConfig.BLOCKS[i][y][3]))
@@ -174,11 +167,9 @@ class Map:
             g = pygame.transform.scale(GameConfig.DIRT_BLOCK_IMG, (GameConfig.MUR_W, GameConfig.MUR_H))
             window.blit(g,GameConfig.MUR[i])
 
-    def f(sellf,x):
+    def f(self,x):
         return 5 * x * np.sin(x)/200+GameConfig.WINDOW_H-100
 
-    def f2(self,x):
-        return 5 * x * np.sin(x)/200+100
 
     def getPolynome(self,x):
         return nppol.polyval(x,self.polynome)

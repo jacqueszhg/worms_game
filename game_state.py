@@ -1,19 +1,16 @@
 import pygame
-
-from move import Move
 from worms import *
-from game_config import *
 from map import *
-from game_config import *
 from round import *
 
 class GameState:
     def __init__(self):
         self.map = Map()
         self.map.createMap()
-        GameConfig.LIST_WORMS.append(Worms(85, self.map))
-        GameConfig.LIST_WORMS.append(Worms(200, self.map))
-        GameConfig.LIST_WORMS.append(Worms(300, self.map))
+
+        GameConfig.LIST_WORMS.append(Worms(100, self.map))
+        GameConfig.LIST_WORMS.append(Worms(int(GameConfig.WINDOW_W/2), self.map))
+        GameConfig.LIST_WORMS.append(Worms(GameConfig.WINDOW_W-100, self.map))
 
     # Methode qui créer la map et qui affiche les worms vivant / morts
     def draw(self,window):
@@ -24,9 +21,6 @@ class GameState:
             GameConfig.LIST_WORMS[i].draw(window)
 
     def advance_state(self, next_move,window):
-        # Permet de modifier la position du joueur mort pour que l'image des worms morts suivent la position du terrain si celui-ci se détruit
-        for j in GameConfig.LIST_WORMS_DEAD:
-            j.charge_position()
 
         if GameConfig.LIST_WORMS[GameConfig.PLAY].mort == False:
             wormsCourant = GameConfig.LIST_WORMS[GameConfig.PLAY]

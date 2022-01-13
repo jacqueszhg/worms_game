@@ -23,20 +23,32 @@ class Worms(pygame.sprite.Sprite):
                                 GameConfig.WORMS_W,
                                 GameConfig.WORMS_H)
         self.image = GameConfig.STANDING_IMG_DROIT
+
+        #initialisation de la vitesse
         self.vx = 0
         self.vy = 0
+
+        #Initialisation d'un temp pour faire tourner les images
         self.temp = 0
+
+        #Liste qui va contenir les projectiles tirer par le worms
         self.all_bullets = pygame.sprite.Group()
         self.tirer = False
         self.life = 100
         self.arme_corde_ninja = False
         self.corde = 0
 
-        self.x0 = -10
-        self.y0 = -10
+        #Variable
+        self.anxienXCorde = -10
+        self.ancienYCorde = -10
+
+        #Variable d'état du worms
         self.jouer = False
         self.mort = False
 
+    """
+    Fonction qui déssine notre worms à l'écran
+    """
     def draw(self,window):
         window.blit(self.image, self.rect)
         font = pygame.font.SysFont("BradBunRb", 25)
@@ -44,38 +56,63 @@ class Worms(pygame.sprite.Sprite):
             life_text = font.render(f"{self.life}", 1, (0, 0, 0))
             window.blit(life_text, (self.rect.x, self.rect.y - 20))
 
+    """
+    Fonction qui modélise la trajectoire d'une pendule, utilisable pour réaliser la corde ninja
+    """
+    def equationCorde(self,t,teta,teta2):
+        return teta2, ((-0.4/GameConfig.MASSE_WORMS)*teta2) - ((GameConfig.GRAVITY/20)*np.sin(teta))
+
+    """
+    Modélsation du déplaccement du worms lorsqu'il utilise la corde ninja
+    """
     def moveCordeNinja(self):
-        self.rect.x = self.x0
-        self.rect.y = self.y0
+        #Permet au worms de rester sur la corde
+        self.rect.x = self.anxienXCorde
+        self.rect.y = self.ancienYCorde
+
         for b in self.all_bullets:
+            #On ne peut se déplacer avec la corde que si elle s'est accroché à un mur
             if b.toucherMur == True:
                 keys = pygame.key.get_pressed()
+
+                #Utilsation du vecteur directeur de la droite formé par le womrs et le point d'attache de la corde
                 pointA = [self.rect.x, self.rect.y]
                 pointB = self.corde.rect
                 vecteurAB = [(pointB[0] - pointA[0]), (pointB[1] - pointA[1])]
+
+                #Calcule d'un pgcd pour avoir le vecteur directeur de la droite la plus petite possible
                 pgcd = GameConfig.pgcd(vecteurAB[0], vecteurAB[1])
+
+                #On monte sur la corde
                 if keys[pygame.K_e]:
                     self.rect.x = self.rect.x + (vecteurAB[0]/pgcd)
                     self.rect.y = self.rect.y + (vecteurAB[1]/pgcd)
-                    self.x0 = self.rect.x
-                    self.y0 = self.rect.y
+                    self.anxienXCorde = self.rect.x
+                    self.ancienYCorde = self.rect.y
+                #On descend sur la corde
                 if keys[pygame.K_s]:
                     self.rect.x = self.rect.x - (vecteurAB[0]/pgcd)
                     self.rect.y = self.rect.y - (vecteurAB[1]/pgcd)
-                    self.x0 = self.rect.x
-                    self.y0 = self.rect.y
+                    self.anxienXCorde = self.rect.x
+                    self.ancienYCorde = self.rect.y
 
+    """
+    Fonction, mouvement basique du worms sur le sol, déplacement gauche, droite et saut
+    """
     def moveClassique(self,fx,fy):
-        # Vitesse
+        # Vitesse du worms sur le déplacement horizontale
         self.vx = fx * GameConfig.DT
+
+        # On détermine si le worms est sur le sol, si oui on peut sauter
+        # Lorsqu'il saute il est summit à la gravité
         if self.on_ground():
             self.vy = fy * GameConfig.DT
         else:
             self.vy = self.vy + GameConfig.GRAVITY * GameConfig.DT
 
         # Position
+        #Déplacement du womrs en X
         self.rect = self.rect.move(self.vx * GameConfig.DT, self.vy * GameConfig.DT)
-
         x = self.rect.left
         vx_min = (-x + (GameConfig.MUR_W-15))/ GameConfig.DT #peut pas sortit de l'écran à gauche
         vx_max = ( GameConfig.WINDOW_W- GameConfig.MUR_W-GameConfig.WORMS_W - x) / GameConfig.DT #peut pas sortir de l'écran à droite
@@ -83,16 +120,16 @@ class Worms(pygame.sprite.Sprite):
 
         y = self.rect.top
 
+        #Position du worms en Y
         GameConfig.Y_PLATEFORM = GameConfig.BLOCKS[self.rect.x][0].top
-
         vy_max = (GameConfig.Y_PLATEFORM - GameConfig.WORMS_H - y) / GameConfig.DT
-
         self.vy = min(self.vy, vy_max)
         self.vx = max(self.vx, vx_min)
-
         self.rect = self.rect.move(self.vx * GameConfig.DT, self.vy * GameConfig.DT)
 
-
+    """
+    Fonction qui change l'état du worms
+    """
     def advance_state(self, next_move,map,window):
         # Acceleration
         fx = 0
@@ -174,7 +211,8 @@ class Worms(pygame.sprite.Sprite):
         else:
             pygame.draw.line(window, (255, 0, 0), self.rect.topright, mouse_pos)
 
-        angle = (mouse_pos[0] - self.rect.x + 26, mouse_pos[1] - self.rect.y + 10)
+
+        angle = [mouse_pos[0] - self.rect.x + 26, mouse_pos[1] - self.rect.y + 10]
 
         if self.tirer == False:
             GameConfig.VENT = random.randrange(-10,10,2)
@@ -200,8 +238,8 @@ class Worms(pygame.sprite.Sprite):
             else:
                 Bullet(10, GameConfig.BULLET_GRENADE_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT).draw(window)
         elif weapon == "corde_ninja":
-            self.x0 = self.rect.x
-            self.y0 = self.rect.y
+            self.anxienXCorde = self.rect.x
+            self.ancienYCorde = self.rect.y
             self.arme_corde_ninja = True
             if pygame.mouse.get_pressed()[0] == True and len(self.all_bullets) == 0:
                 self.corde = Bullet(10, GameConfig.BULLET_CORDE_NINJA_IMG, self, mouse_pos, weapon, angle, GameConfig.VENT)

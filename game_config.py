@@ -3,32 +3,51 @@ import pygame
 import random
 
 class GameConfig:
+    #Récupération de la dimension d'écran de l'utilisateur
     WINDOW_H = pygame.display.set_mode().get_size()[1] - 100
     WINDOW_W = pygame.display.set_mode().get_size()[0] - 200
+
+    #La plateforme sur lequel peut marcher notre worms
     Y_PLATEFORM = 516
+
+    #Tableau qui contient les block de notre jeux
     BLOCKS = {}
     BLOCKS_DETRUIT = []
+
+    #Dimension de nos blocks
     BLOCK_W =  int(WINDOW_W/100)
     BLOCK_H =  int(WINDOW_W/100)
+
+    #Dimensio des blocks mur
     MUR = []
     MUR_H = 25
     MUR_W = 25
+
+    #Dimension du worms
     WORMS_H = 35
     WORMS_W = 32
+
+    #L'intervalle de temps pour mettre en oeuvre la force de la gravité
     DT = 0.5
-    FORCE_LEFT = -20
-    FORCE_RIGHT = -FORCE_LEFT
     GRAVITY = 9.81
-    FORCE_JUMP = -70
-    WORMS_DROIT = True
+
+    #Variable pour le worms
+    FORCE_LEFT = -20 #distance : déplacement à gauche
+    FORCE_RIGHT = -FORCE_LEFT #distance : déplacement à gauche
+    FORCE_JUMP = -70 #hauteur de saut
+    WORMS_DROIT = True #connaitre la direction du worms
+
+    #Contient nos womrs qui jouent
     LIST_WORMS = []
-    LIST_WORMS_DEAD = []
     PLAY = 0
     MASSE_MUR = 20
     MASSE_GRENADE = 5
     MASSE_WORMS = 9
     VENT = random.randrange(-10, 10, 2)
 
+    """
+    Chargement des images utilile pour le jeux
+    """
     def init():
 
         GameConfig.BACKGROUND_IMG = pygame.image.load('assets/fond/fond_nuage.jpg')
@@ -66,6 +85,9 @@ class GameConfig:
 
         GameConfig.STANDING_IMG_MORT = pygame.image.load('assets/worms/worms_mort.png')
 
+    """
+    Fonction de euleur pour résoudre des équations diférentielle
+    """
     def euleur(t,vx,vy,x,y,vxn,vyn,xn,yn,dt):
         vx = dt * vx
         vy = dt * vy
@@ -77,10 +99,9 @@ class GameConfig:
         yFin = yn + y
         return vxFin,vyFin,xFin,yFin
 
-    def mouvement_pendulaire(t,teta,teta2,l):
-        b = 0.4
-        return teta2, (b/GameConfig.MASSE_WORMS)*teta2 + (GameConfig.GRAVITY/l**2)*np.sin(teta)
-
+    """
+    Fonction pour afficher du texte sur l'écran
+    """
     def displayMessage(window, text, fontSize, x, y):
         font = pygame.font.Font('assets/font/BradBunR.ttf', fontSize)
         img = font.render(text, True, (255, 255, 255))
@@ -88,6 +109,9 @@ class GameConfig:
         displayRect.center = (x, y)
         window.blit(img, displayRect)
 
+    """
+    Calcule du pgcd
+    """
     def pgcd(a,b):
         d = 1
         while a != b:
@@ -95,7 +119,7 @@ class GameConfig:
             b = a
             a = d
         return d
+
 GameConfig.euleur = staticmethod(GameConfig.euleur)
-GameConfig.mouvement_pendulaire = staticmethod(GameConfig.mouvement_pendulaire)
 GameConfig.displayMessage = staticmethod(GameConfig.displayMessage)
 GameConfig.pgcd = staticmethod(GameConfig.pgcd)
