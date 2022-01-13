@@ -252,11 +252,14 @@ class Bullet(pygame.sprite.Sprite):
                 self.toucherMur = True
 
     """
-    Fonction qui 
+    Fonction qui approximative le mouvement parabolique d'un objet, soumis seulement à la gravité
     """
     def F_Gravite(self,t,vx,vy,x,y):
         return 0,GameConfig.GRAVITY,vx,vy
 
+    """
+    Fonction qui approximative le mouvement parabolique d'un objet, soumis à la gravité et à la friction du vent
+    """
     def F_Gravite_Friction(self,t,vx,vy,x,y):
         k = 0.023
         vx2 = vx**2
@@ -265,6 +268,9 @@ class Bullet(pygame.sprite.Sprite):
                k * np.sqrt(vx2+vy2) + GameConfig.GRAVITY,\
                vx,vy
 
+    """
+    Fonction qui approximative le mouvement parabolique d'un objet, soumis à la gravité, à la friction du vent et au vent
+    """
     def F_Gravite_Friction_Vent(self,t,vx,vy,x,y):
         k = 0.023
         vx2 = vx**2
@@ -273,7 +279,11 @@ class Bullet(pygame.sprite.Sprite):
                k * np.sqrt(vx2+vy2) + GameConfig.GRAVITY,\
                vx,vy
 
+    """
+    Fonction qui simule le lancer de la code ninja avec une équation cartésiennne
+    """
     def moveCordeNinja(self):
+        #Si la point de la corde ninja touche un mur il s'accroche et bouge plus
         if self.toucherMur == False:
             self.rect.x += self.velocity
 
@@ -288,6 +298,7 @@ class Bullet(pygame.sprite.Sprite):
 
             self.rect.y = (-(a * self.rect.x) - c) / b
 
+            #Si la pointe de la corde touche un block il si plante
             for i in range(len(GameConfig.BLOCKS)):
                 for y in range(len(GameConfig.BLOCKS[i])):
                     if self.rect.colliderect(GameConfig.BLOCKS[i][y]) and self.toucherMur == False:
