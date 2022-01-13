@@ -40,8 +40,18 @@ class Map:
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         ])'''
+        if((GameConfig.WINDOW_H/25) %2 == 0):
+            H = int(GameConfig.WINDOW_H / 25)
+        else:
+            H = int(GameConfig.WINDOW_H/25) + 1
 
-        self.matrice_map = np.zeros((int(GameConfig.WINDOW_H/25)+1, int(GameConfig.WINDOW_W/25)+1))
+        if (GameConfig.WINDOW_W/25) % 2 == 0:
+            W = int(GameConfig.WINDOW_W/25)
+        else:
+            W = int(GameConfig.WINDOW_W/25) + 1
+
+
+        self.matrice_map = np.zeros((int(H), int(W)))
         for i in range(len(self.matrice_map[0])):
             self.matrice_map[0][i] = 1
         nbligne, nbcolonne = self.matrice_map.shape
@@ -128,7 +138,6 @@ class Map:
 
     def createMap(self):
         x,y = self.fonction_principale()
-        print(x, y)
         for ligne in range(len(x)):
             #GameConfig.BLOCKS.append(pygame.Rect(x[ligne],y[ligne],GameConfig.WINDOW_W/100,GameConfig.WINDOW_W/100))
             GameConfig.BLOCKS[ligne] = []
@@ -166,7 +175,7 @@ class Map:
             window.blit(g,GameConfig.MUR[i])
 
     def f(sellf,x):
-        return 5 * x * np.sin(x)/200+1000
+        return 5 * x * np.sin(x)/200+GameConfig.WINDOW_H-100
 
     def f2(self,x):
         return 5 * x * np.sin(x)/200+100

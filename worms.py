@@ -3,6 +3,7 @@ import time
 import pygame
 
 import map
+from bullet import Bullet
 from game_config import *
 from map import *
 from bullet import *
@@ -33,11 +34,11 @@ class Worms(pygame.sprite.Sprite):
 
         self.x0 = -10
         self.y0 = -10
-
+        self.jouer = False
 
     def draw(self,window):
         window.blit(self.image, self.rect)
-        self.displayMessage(window,str(GameConfig.VENT),50,100,100)
+        GameConfig.displayMessage(window,"vent "+str(GameConfig.VENT),50,100,100)
 
     def advance_state(self, next_move,map,window):
         # Acceleration
@@ -110,7 +111,12 @@ class Worms(pygame.sprite.Sprite):
         #GameConfig.Y_PLATEFORM = int(map.getPolynome(self.rect.left))
         #GameConfig.Y_PLATEFORM = GameConfig.BLOCKS[self.rect.x].top
         GameConfig.Y_PLATEFORM = GameConfig.BLOCKS[self.rect.x][0].top
-
+        """
+        for i in range (0,GameConfig.WINDOW_H):
+            if GameConfig.BLOCK2[self.rect.x][i] != None:
+                if (GameConfig.BLOCK2[self.rect.x][i].y > GameConfig.Y_PLATEFORM):
+                    GameConfig.Y_PLATEFORM = GameConfig.BLOCK2[self.rect.x][i].y
+        """
 
         """
         collision = False
@@ -136,17 +142,19 @@ class Worms(pygame.sprite.Sprite):
         if self.arme_corde_ninja == True:
             keys = pygame.key.get_pressed()
             if keys[pygame.K_e]:
-                self.rect.x += 10
-
-                pointA = [self.x0, self.y0]
+                pointA = [self.rect.x, self.rect.y]
                 pointB = self.corde.rect
                 vecteurAB = [(pointB[0] - pointA[0]), (pointB[1] - pointA[1])]
+                self.rect.x = (self.rect.x + vecteurAB[0]/2)
+                self.rect.y = (self.rect.y + vecteurAB[1]/2)
+                """
                 b = -vecteurAB[0]
                 if (b == 0):
                     b = 1
                 a = vecteurAB[1]
                 c = -(a * pointB[0]) - (b * pointB[1])
-                self.rect.y = (-(a * self.rect.x) - c) / b
+                self.rect.y = (-(a * x) - c) / b
+                """
             if keys[pygame.K_s]:
                 print("descen")
 
@@ -179,7 +187,7 @@ class Worms(pygame.sprite.Sprite):
         angle = (mouse_pos[0] - self.rect.x + 26, mouse_pos[1] - self.rect.y + 10)
 
         if self.tirer == False:
-            GameConfig.VENT = random.randrange(-20,20,2)
+            GameConfig.VENT = random.randrange(-10,10,2)
             self.tirer = True
 
         if(weapon == "carabine"):
@@ -214,18 +222,8 @@ class Worms(pygame.sprite.Sprite):
             else:
                 Bullet(10, GameConfig.BULLET_CORDE_NINJA_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT).draw(window)
 
-
-
-
-    def displayMessage(self,window, text, fontSize, x, y):
-        font = pygame.font.Font('assets/font/BradBunR.ttf', fontSize)
-        img = font.render("vent" + text, True, (255,255,255))
-        displayRect = img.get_rect()
-        displayRect.center = (x, y)
-        window.blit(img, displayRect)
-
-    def is_dead(self, value):
-        if GameConfig.LIST_WORMS[value].life <= 0 or GameConfig.LIST_WORMS[value].rect.y >= GameConfig.WINDOW_H-40:
+    def is_dead(self):
+        if self.life <= 0 or self.rect.bottom >= GameConfig.WINDOW_H:
             return True
         return False
 
@@ -247,12 +245,14 @@ class Worms(pygame.sprite.Sprite):
         self.vx = min(self.vx, vx_max)
 
         y = self.rect.top
-        #GameConfig.Y_PLATEFORM = GameConfig.BLOCKS[self.rect.left].top
-        #GameConfig.Y_PLATEFORM = map.f(self.rect.left)
-        #GameConfig.Y_PLATEFORM = int(map.getPolynome(self.rect.left))
-        #GameConfig.Y_PLATEFORM = GameConfig.BLOCKS[self.rect.x].top
         a = GameConfig.BLOCKS[self.rect.x][0].top
-
+        """
+        a = -10
+        for i in range (0,GameConfig.WINDOW_H,GameConfig.BLOCK_H):
+            if GameConfig.BLOCK2[self.rect.x][i] != None:
+                if (GameConfig.BLOCK2[self.rect.x][i].y > a):
+                    a = GameConfig.BLOCK2[self.rect.x][i].y
+        """
 
         """
         collision = False

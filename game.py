@@ -7,16 +7,18 @@ from move import *
 def game_loop(window):
     quitting = False
     game_state = GameState()
-    while not quitting :
+    fin = 0
+    while not quitting and fin == 0:
         game_state.draw(window)
         souris(window)
         for event in pygame.event.get() :
             if event.type == pygame.QUIT :
                 quitting = True
         next_move = get_next_move()
-        game_state.advance_state(next_move,window)
+        fin = game_state.advance_state(next_move,window)
         pygame.time.delay(50)
         pygame.display.update()
+    return fin
 
 
 def get_next_move():
@@ -47,18 +49,30 @@ def souris(window):
     cursor.center = pygame.mouse.get_pos()  # update position
     window.blit(GameConfig.CURSOR_IMG, cursor)  # draw the cursor
 
+def resetGame():
+    GameConfig.LIST_WORMS = []
+    GameConfig.LIST_WORMS_DEAD = []
+    GameConfig.BLOCKS = {}
+    GameConfig.BLOCKS_DETRUIT = {}
+    GameConfig.PLAY = 0
+
 # Fonction principale
 def main() :
     #initialise pygame
     pygame.init()
     GameConfig.init()
 
-    #initialise la fenetre
+
+    # initialise la fenetre
     window = pygame.display.set_mode((GameConfig.WINDOW_W, GameConfig.WINDOW_H))
     pygame.display.set_caption("Worms")
 
+    rejouer = 1
     #lance le jeux avec les images
-    game_loop(window)
+    while rejouer == 1:
+        rejouer = game_loop(window)
+        resetGame()
+
 
     #quuitte le jeux
     pygame.quit()

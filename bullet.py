@@ -50,6 +50,7 @@ class Bullet(pygame.sprite.Sprite):
         self.cordeIndice = 0
 
     def remove(self):
+        self.worms.jouer = True
         self.worms.all_bullets.remove(self)
 
     def draw(self,window):
@@ -83,7 +84,6 @@ class Bullet(pygame.sprite.Sprite):
             #supprimer la bullet
             if(self.type != "corde_ninja"):
                 self.remove()
-                Round.next_round()
             if(self.type == "carabine"):
                 for i in range(len(GameConfig.LIST_WORMS)):
                     if self.rect.colliderect(GameConfig.LIST_WORMS[i]):
@@ -214,6 +214,9 @@ class Bullet(pygame.sprite.Sprite):
         #vx,vy,x,y = self.F_Gravite(t,vxn,vyn,xn,yn)
         #vx,vy,x,y = self.F_Gravite_Friction(t,vxn,vyn,xn,yn)
         vx,vy,x,y = self.F_Gravite_Friction_Vent(t,vxn,vyn,xn,yn)
+        self.vx,self.vy,self.rect.x,self.rect.y = GameConfig.euleur(t,vx,vy,x,y,vxn,vyn,xn,yn,dt)
+
+        """
         vx = dt * vx
         vy = dt * vy
         x = dt * x
@@ -223,6 +226,8 @@ class Bullet(pygame.sprite.Sprite):
         self.vy = vyn + vy
         self.rect.x = xn + x
         self.rect.y = yn + y
+        """
+
         collision = False
         """
         for i in range(len(GameConfig.BLOCKS)):
@@ -246,10 +251,12 @@ class Bullet(pygame.sprite.Sprite):
 
     #https://fr.wikipedia.org/wiki/Choc_élastique
     def chocElastique(self):
-         newVx = ((GameConfig.MASSE_GRENADE - GameConfig.MASSE_MUR)/(GameConfig.MASSE_GRENADE + GameConfig.MASSE_MUR)) * self.vx
-         newVy = ((GameConfig.MASSE_GRENADE - GameConfig.MASSE_MUR)/(GameConfig.MASSE_GRENADE + GameConfig.MASSE_MUR)) * self.vy
+         newVx = ((GameConfig.MASSE_GRENADE - GameConfig.MASSE_MUR)/(GameConfig.MASSE_GRENADE + GameConfig.MASSE_MUR)) * (self.vx)
+         newVy = ((GameConfig.MASSE_GRENADE - GameConfig.MASSE_MUR)/(GameConfig.MASSE_GRENADE + GameConfig.MASSE_MUR)) * (self.vy)
          self.vx = newVx
          self.vy = newVy
+         #self.vx = -self.vx * 1 / 3
+         #self.vy = -self.vy * 1/3
 
     def moveRocket(self):
         dt = 0.3
@@ -259,18 +266,25 @@ class Bullet(pygame.sprite.Sprite):
         xn = self.rect.x
         yn = self.rect.y
 
+
         #vx,vy,x,y = self.F_Gravite(t,vxn,vyn,xn,yn)
         #vx,vy,x,y = self.F_Gravite_Friction(t,vxn,vyn,xn,yn)
         vx,vy,x,y = self.F_Gravite_Friction_Vent(t,vxn,vyn,xn,yn)
+        self.vx,self.vy,self.rect.x,self.rect.y = GameConfig.euleur(t,vx,vy,x,y,vxn,vyn,xn,yn,dt)
+        """
         vx = dt * vx
         vy = dt * vy
         x = dt * x
         y = dt * y
+        """
+        """
 
+        vx,vy,x,y = self.euleur(t,vx,vy,x,y,dt)
         self.vx = vxn + vx
         self.vy = vyn + vy
         self.rect.x = xn + x
         self.rect.y = yn + y
+        """
 
         """
         for i in range(len(GameConfig.BLOCKS)):
