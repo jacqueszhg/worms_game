@@ -18,14 +18,13 @@ import matplotlib.pyplot as plt
 
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self,velocity,image,worms,mouse_pos,type,angle,vent):
+    def __init__(self,image,worms,mouse_pos,type,vitesseInitiale,vent):
         super().__init__()
         self.worms = worms
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.x = worms.rect.topright[0]
         self.rect.y = worms.rect.topright[1]
-        self.y_origine = self.rect.y
         self.mouse_pos = mouse_pos
 
         #Calcule distance pour la vitesse
@@ -34,7 +33,8 @@ class Bullet(pygame.sprite.Sprite):
         distance = (pow(pow(absolute_x, 2) + pow(absolute_y, 2), 0.5))/10
         if(distance > 50):
             distance = 50
-        #vitesse initiale
+
+        #vitesse initiale pour la carabine
         if(self.mouse_pos < (self.worms.rect.x,self.worms.rect.y)):
             self.velocity = -distance
             self.rect.x = worms.rect.topleft[0] - 15
@@ -42,45 +42,58 @@ class Bullet(pygame.sprite.Sprite):
         else:
             self.velocity = distance
 
+        #vitesse initiale pour la grenade et la rocket
         self.x0 = self.rect.x
         self.y0 = self.rect.y
-        print(angle)
-        if angle[0] < -100:
-            angle[0] = -100
-            if angle[1] < 100:
-                angle[1] = 100
-            elif angle[1] > -100:
-                angle[1] = -100
-        if angle[0] > 100:
-            angle[0] = 100
-            if angle[1] < -100:
-                angle[1] = -100
-            elif angle[1] > 100:
-                angle[1] = 100
-        #vitesse de dire pour la grenade et le rocket
-        self.vx = angle[0]
-        self.vy = angle[1]
+
+        #On limite la vitesse de la grenade et de la rocket
+        if vitesseInitiale[0] > 100 :
+            vitesseInitiale[0] = 100
+
+        if vitesseInitiale[0] < -100:
+            vitesseInitiale[0] = -100
+
+        if(vitesseInitiale[1] > 100):
+            vitesseInitiale[1] = 100
+
+        if vitesseInitiale[1] < -100:
+            vitesseInitiale[1] = -100
+
+        #vitesse initiale pour la grenade et le rocket
+        self.vx = vitesseInitiale[0]
+        self.vy = vitesseInitiale[1]
 
         self.temp = time.time()
         self.type = type
         self.vent = vent
         self.toucherMur = False
 
+    """
+    Fonction qui supprime de la liste de projecile du worms, le projectile courant et indique que le worms qui a tirer a fini son tour
+    """
     def remove(self):
         self.worms.jouer = True
         self.worms.all_bullets.remove(self)
 
+    """
+    Fonction qui déssine la balle sur l'écran
+    """
     def draw(self,window):
         window.blit(self.image,self.rect)
 
+    """
+    Fonction qui retourne True si la balle a touché un joueur ou lui même, sinon False
+    """
     def touch(self):
         for i in range(len(GameConfig.LIST_WORMS)):
             if self.rect.colliderect(GameConfig.LIST_WORMS[i]):
                 return True
         return False
 
+    """
+    Fonction qui  simule le mouvement de la balle
+    """
     def move(self,window):
-        global degat
         if(self.type == "carabine"):
             self.moveCarabine()
         if self.type =="rocket":
@@ -92,17 +105,29 @@ class Bullet(pygame.sprite.Sprite):
             pygame.draw.line(window, (88, 41, 0), (self.worms.rect.center[0], self.worms.rect.center[1]), self.rect.center,5)
 
 
-        #vérifier si la bullet est hors écran
-        #ajouter une condition que la bullet disparait qu'on un certain temps est passé
+        #Si la bullet est hors écran on la supprimet et je joueur a fini de jouer
+        #Si la bullet touche un queleconque objet il se détruit ou explose
+        #Si un certain temps est passé la bullet disparait
         if self.rect.x > GameConfig.WINDOW_W or self.rect.x < 0 or self.rect.y<0 or self.rect.y > GameConfig.WINDOW_H or time.time() - self.temp > 5 or self.toucherMur == True or self.touch():
-            #supprimer la bullet
+
+            #supprimer la bullet si ce n'est pas la corde ninja
             if(self.type != "corde_ninja"):
                 self.remove()
+
+            #Si carabine touche un joueur lui retire des point de vie
+            #Si touche un block se détruit
             if(self.type == "carabine"):
+                for i in range(len(GameConfig.BLOCKS)):
+                    for y in range(len(GameConfig.BLOCKS[i])):
+                        if pygame.Rect.colliderect(self.rect, GameConfig.BLOCKS[i][y]):
+                            self.remove()
+
                 for i in range(len(GameConfig.LIST_WORMS)):
                     if self.rect.colliderect(GameConfig.LIST_WORMS[i]):
                         GameConfig.LIST_WORMS[i].life = GameConfig.LIST_WORMS[i].life - 40
 
+            # Si grenade ou rocket explose déstruction de la map dans un rayon défini
+            # Inflige des dégâts au worms selon leur distance de la grenade
             blockDetruit = []
             if(self.type == "grenade" or self.type == "rocket"):
                 circle = pygame.draw.circle(window,(255,255,255),self.rect.center,40)
@@ -122,7 +147,7 @@ class Bullet(pygame.sprite.Sprite):
                         GameConfig.LIST_WORMS[i].life = GameConfig.LIST_WORMS[i].life - degat_nade
 
 
-
+            # Si on tire avec la corde ninja elle se détruit que si on lâche le click gauche
             elif self.type == "corde_ninja":
                 if pygame.mouse.get_pressed()[0] == True:
                     pass
@@ -131,7 +156,7 @@ class Bullet(pygame.sprite.Sprite):
                     self.toucherMur = False
 
 
-
+            # Applique la destruction des blocks
             for i in blockDetruit:
                 for y in range(len(GameConfig.BLOCKS)):
                     if(i in GameConfig.BLOCKS[y]):
@@ -140,11 +165,13 @@ class Bullet(pygame.sprite.Sprite):
                         else:
                             i.y = i.bottom + 50
 
-
+    """
+    Fonction qui simule le déplacement d'une balle de carabine
+    """
     def moveCarabine(self):
-        # mélange idée 3 et 2 fonction mais queleque soucis
         self.rect.x += self.velocity
 
+        #Utilisation d'une équation cartésienne pour déterminer la position de la balle au cout du temps
         pointA = [self.x0, self.y0]
         pointB = self.mouse_pos
         vecteurAB = [(pointB[0] - pointA[0]), (pointB[1] - pointA[1])]
@@ -154,9 +181,10 @@ class Bullet(pygame.sprite.Sprite):
         a = vecteurAB[1]
         c = -(a * pointB[0]) - (b * pointB[1])
         self.rect.y = (-(a * self.rect.x) - c) / b
-        # self.rect.y -= 12 selon une puissance donnée on fait baisé la balle
 
-
+    """
+    Fonction qui simule le déplacement d'une granade, avec lancement parabolique et rebond
+    """
     def moveGrenade(self):
         dt = 0.3
         t = self.rect.x + dt
@@ -165,13 +193,18 @@ class Bullet(pygame.sprite.Sprite):
         xn = self.rect.x
         yn = self.rect.y
 
+
         #vx,vy,x,y = self.F_Gravite(t,vxn,vyn,xn,yn)
         #vx,vy,x,y = self.F_Gravite_Friction(t,vxn,vyn,xn,yn)
+
+        # Calcule de la position de la granade au différent instant t, avec méthode de euleur
+        # Mouvement parabolique soumit aux forces gravitationnlle, friction et vent
         vx,vy,x,y = self.F_Gravite_Friction_Vent(t,vxn,vyn,xn,yn)
         self.vx,self.vy,self.rect.x,self.rect.y = GameConfig.euleur(t,vx,vy,x,y,vxn,vyn,xn,yn,dt)
 
         collision = False
 
+        #Lorsque la grenade touche un block il rebondit
         for i in range(len(GameConfig.BLOCKS)):
             for y in range(len(GameConfig.BLOCKS[i])):
                 if self.rect.colliderect(GameConfig.BLOCKS[i][y]) and collision == False:
@@ -183,12 +216,19 @@ class Bullet(pygame.sprite.Sprite):
                 collision = True
 
     #https://fr.wikipedia.org/wiki/Choc_élastique
+    """
+    Fonction, qui simule le rebond d'une grenade avec le choc élastique
+    """
     def chocElastique(self):
          newVx = ((GameConfig.MASSE_GRENADE - GameConfig.MASSE_MUR)/(GameConfig.MASSE_GRENADE + GameConfig.MASSE_MUR)) * (self.vx)
          newVy = ((GameConfig.MASSE_GRENADE - GameConfig.MASSE_MUR)/(GameConfig.MASSE_GRENADE + GameConfig.MASSE_MUR)) * (self.vy)
          self.vx = newVx
          self.vy = newVy
 
+
+    """
+    Fonction qui simule le déplacement d'une rocket, mouvement parabolique
+    """
     def moveRocket(self):
         dt = 0.3
         t = self.rect.x + dt
@@ -211,6 +251,9 @@ class Bullet(pygame.sprite.Sprite):
             if self.rect.colliderect(GameConfig.MUR[i])and self.toucherMur == False:
                 self.toucherMur = True
 
+    """
+    Fonction qui 
+    """
     def F_Gravite(self,t,vx,vy,x,y):
         return 0,GameConfig.GRAVITY,vx,vy
 

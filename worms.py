@@ -128,13 +128,15 @@ class Worms(pygame.sprite.Sprite):
         self.rect = self.rect.move(self.vx * GameConfig.DT, self.vy * GameConfig.DT)
 
     """
-    Fonction qui change l'état du worms
+    Fonction qui change l'état du worms durant le jeu
     """
     def advance_state(self, next_move,map,window):
         # Acceleration
         fx = 0
         fy = 0
-        if next_move.left:
+
+        #Change l'image du worms selon s'il va a gauche ou a droite et applique l'acceleration de son mouvement dans les variable fx ou fy
+        if next_move.left: #si mouvement gauche
             clock = time.time()
             if(clock-self.temp < 0.2):
                 fx = GameConfig.FORCE_LEFT
@@ -149,7 +151,7 @@ class Worms(pygame.sprite.Sprite):
                 self.temp = time.time()
                 self.image = GameConfig.STANDING_IMG_GAUCHE
                 GameConfig.WORMS_DROIT = False
-        elif next_move.right:
+        elif next_move.right: #si mouvement droit
             clock = time.time()
             if(clock-self.temp < 0.2):
                 fx = GameConfig.FORCE_RIGHT
@@ -164,32 +166,42 @@ class Worms(pygame.sprite.Sprite):
                 self.temp = time.time()
                 self.image = GameConfig.STANDING_IMG_DROIT
             GameConfig.WORMS_DROIT = True
-        else:
+        else: #si aucun mouvement on reste immobile
             if(GameConfig.WORMS_DROIT):
                 self.image = GameConfig.STANDING_IMG_DROIT
             else:
                 self.image = GameConfig.STANDING_IMG_GAUCHE
 
-        if next_move.jump:
+        if next_move.jump: #si on veut sauter
                 fy = GameConfig.FORCE_JUMP
                 if(GameConfig.WORMS_DROIT):
                     self.image = GameConfig.WALK_JUMP_IMG_DROIT
                 else:
                     self.image = GameConfig.WALK_JUMP_IMG_GAUCHE
 
+        #chois de l'arme et réalisation du tir
         self.weaponChoice(next_move,window)
+
+        #Décide du mouvement du worms
         if self.arme_corde_ninja != True:
             self.moveClassique(fx, fy)
         else:
             self.moveCordeNinja()
 
+        #on vérifie à la fin du tour du worms s'il est mort, si oui il ne pourra plus jouer
         self.is_dead()
 
+    """
+    Fonction qui permet de savoir si le worms est sur le sol
+    """
     def on_ground(self):
         if(self.rect.bottom == GameConfig.Y_PLATEFORM):
             return True
         return False
 
+    """
+    Fonction qui détermine qu'elle arme est entrain d'être utilisée
+    """
     def weaponChoice(self,next_move,window):
         if(next_move.carabine):
             self.arme_corde_ninja = False
@@ -204,58 +216,71 @@ class Worms(pygame.sprite.Sprite):
             self.arme_corde_ninja = True
             self.shoot("corde_ninja",window)
 
+    """
+    Fonction qui déclenche le tir, de l'arme choisis
+    """
     def shoot(self,weapon,window):
+        #Récupération position de la souris
         mouse_pos = pygame.mouse.get_pos()
+
+        #Déssine une droite qui montre dans quel direction on tire
         if(mouse_pos < (self.rect.x,self.rect.y)):
             pygame.draw.line(window, (255, 0, 0), (self.rect.topleft[0], self.rect.topleft[1]), mouse_pos)
         else:
             pygame.draw.line(window, (255, 0, 0), self.rect.topright, mouse_pos)
 
+        #Calcule le vecteur de la vitesse initiale
+        vitesseInitiale = [mouse_pos[0] - self.rect.x + 26, mouse_pos[1] - self.rect.y + 10]
 
-        angle = [mouse_pos[0] - self.rect.x + 26, mouse_pos[1] - self.rect.y + 10]
-
+        #Le vent change après chaque tire d'un worms
         if self.tirer == False:
             GameConfig.VENT = random.randrange(-10,10,2)
             self.tirer = True
 
+        #On détermine qu'elle arme a été choisis et on tire que lors du clique gauche souris du joueur
+        #On ne peut tirer qu'un projectile à la fois
         if(weapon == "carabine"):
             if pygame.mouse.get_pressed()[0] == True and len(self.all_bullets) == 0:
-                self.all_bullets.add(Bullet(10,GameConfig.BULLET_CARABINE_IMG,self,mouse_pos, weapon,angle,GameConfig.VENT))
+                self.all_bullets.add(Bullet(GameConfig.BULLET_CARABINE_IMG,self,mouse_pos, weapon,vitesseInitiale,GameConfig.VENT))
                 self.tirer = False
             else:
-                Bullet(10, GameConfig.BULLET_CARABINE_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT).draw(window)
-            #self.bullet = Bullet(10,GameConfig.BULLET_CARABINE_IMG,self,mouse_pos)
+                Bullet(GameConfig.BULLET_CARABINE_IMG, self, mouse_pos, weapon,vitesseInitiale,GameConfig.VENT).draw(window)
         elif(weapon == "rocket"):
             if pygame.mouse.get_pressed()[0] == True and len(self.all_bullets) == 0:
-                self.all_bullets.add(Bullet(10, GameConfig.BULLET_ROCKET_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT))
+                self.all_bullets.add(Bullet(GameConfig.BULLET_ROCKET_IMG, self, mouse_pos, weapon,vitesseInitiale,GameConfig.VENT))
                 self.tirer = False
             else:
-                Bullet(10, GameConfig.BULLET_ROCKET_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT).draw(window)
+                Bullet(GameConfig.BULLET_ROCKET_IMG, self, mouse_pos, weapon,vitesseInitiale,GameConfig.VENT).draw(window)
         elif weapon == "grenade":
             if pygame.mouse.get_pressed()[0] == True and len(self.all_bullets) == 0:
-                self.all_bullets.add(Bullet(10, GameConfig.BULLET_GRENADE_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT))
+                self.all_bullets.add(Bullet(GameConfig.BULLET_GRENADE_IMG, self, mouse_pos, weapon,vitesseInitiale,GameConfig.VENT))
                 self.tirer = False
             else:
-                Bullet(10, GameConfig.BULLET_GRENADE_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT).draw(window)
+                Bullet(GameConfig.BULLET_GRENADE_IMG, self, mouse_pos, weapon,vitesseInitiale,GameConfig.VENT).draw(window)
         elif weapon == "corde_ninja":
             self.anxienXCorde = self.rect.x
             self.ancienYCorde = self.rect.y
             self.arme_corde_ninja = True
             if pygame.mouse.get_pressed()[0] == True and len(self.all_bullets) == 0:
-                self.corde = Bullet(10, GameConfig.BULLET_CORDE_NINJA_IMG, self, mouse_pos, weapon, angle, GameConfig.VENT)
-                #self.all_bullets.add(Bullet(10, GameConfig.BULLET_CORDE_NINJA_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT))
+                self.corde = Bullet(GameConfig.BULLET_CORDE_NINJA_IMG, self, mouse_pos, weapon, vitesseInitiale, GameConfig.VENT)
                 self.all_bullets.add(self.corde)
                 self.tirer = False
             else:
-                Bullet(10, GameConfig.BULLET_CORDE_NINJA_IMG, self, mouse_pos, weapon,angle,GameConfig.VENT).draw(window)
+                Bullet(GameConfig.BULLET_CORDE_NINJA_IMG, self, mouse_pos, weapon,vitesseInitiale,GameConfig.VENT).draw(window)
 
 
-    # Methode qui retourne True si le worms est mort et retourne False si il est vivant
+    """
+    Fonction qui change l'état d'un worms à mort, il ne peut plus jouer
+    """
     def is_dead(self):
         if self.life <= 0 or self.rect.bottom >= GameConfig.WINDOW_H:
             self.image = GameConfig.STANDING_IMG_MORT
             self.rect.update(self.rect.left,self.rect.top,0,0)
             self.mort = True
+
+    """
+    Fonction qui met a jour la position d'un worms lorsque ce n'est pas son tour ou s'il est mort
+    """
     def charge_position(self):
 
         # Vitesse
