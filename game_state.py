@@ -14,14 +14,16 @@ class GameState:
 
     # Methode qui créer la map et qui affiche les worms vivant / morts
     def draw(self,window):
+        # Affichage de la map et du vent
         window.blit(GameConfig.BACKGROUND_IMG,(0,0))
         self.map.draw(window)
         GameConfig.displayMessage(window, "vent " + str(GameConfig.VENT), 50, 100, 100)
+        # Boucle qui parcours la liste de worms pour les afficher sur la map
         for i in range(len(GameConfig.LIST_WORMS)):
             GameConfig.LIST_WORMS[i].draw(window)
 
+    #
     def advance_state(self, next_move,window):
-
         if GameConfig.LIST_WORMS[GameConfig.PLAY].mort == False:
             wormsCourant = GameConfig.LIST_WORMS[GameConfig.PLAY]
             wormsCourant.advance_state(next_move, self.map, window)
