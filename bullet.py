@@ -47,6 +47,7 @@ class Bullet(pygame.sprite.Sprite):
         self.y0 = self.rect.y
 
         #On limite la vitesse de la grenade et de la rocket
+        #On limite la norme du vecteur
         if vitesseInitiale[0] > 100 :
             vitesseInitiale[0] = 100
 

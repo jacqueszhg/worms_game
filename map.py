@@ -23,18 +23,21 @@ class Map:
         self.polynome = self.get_poly_lagrange(self.px,self.py)
 
         # Calcule pour déterminer la taille de la matrice qui contiendra les murs du jeu
-        if((GameConfig.WINDOW_H/25) %2 == 0): #Si le résultat est pair pas de soucis, mais si impair on grande un taille au-dessus
-            H = int(GameConfig.WINDOW_H / 25)
+        if((GameConfig.WINDOW_H/GameConfig.MUR_H) %2 == 0): #Si le résultat est pair pas de soucis, mais si impair on grande un taille au-dessus
+            H = int(GameConfig.WINDOW_H / GameConfig.MUR_H)
         else:
-            H = int(GameConfig.WINDOW_H/25) + 1
+            H = int(GameConfig.WINDOW_H/ GameConfig.MUR_H) + 1
 
-        if (GameConfig.WINDOW_W/25) % 2 == 0:
-            W = int(GameConfig.WINDOW_W/25)
+        if (GameConfig.WINDOW_W/GameConfig.MUR_W) % 2 == 0:
+            W = int(GameConfig.WINDOW_W/GameConfig.MUR_W)
         else:
-            W = int(GameConfig.WINDOW_W/25) + 1
+            W = int(GameConfig.WINDOW_W/GameConfig.MUR_W) + 1
 
         # Création de la matrice pour la map avec les blocks sur le tour de la map
+        # D'abord une matrice que à zéro
         self.matrice_map = np.zeros((int(H), int(W)))
+
+        #On met à 1 les casses qui font le contours de la matrice
         for i in range(len(self.matrice_map[0])):
             self.matrice_map[0][i] = 1
         nbligne, nbcolonne = self.matrice_map.shape
