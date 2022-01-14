@@ -140,8 +140,7 @@ class Map:
             window.blit(g,GameConfig.MUR[i])
 
     def f(self,x):
-        return 5 * x * np.sin(x)/200+GameConfig.WINDOW_H-100
-
+        return 10 * x * np.sin(x)/200+GameConfig.WINDOW_H-100
     """
     Fonction qui retourne le polynome de lagrange
     """
