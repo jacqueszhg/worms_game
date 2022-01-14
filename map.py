@@ -8,19 +8,19 @@ from game_config import *
 
 class Map:
     def __init__(self):
-        # Initialisation des points pour créer la courbe avec lagrange
+        # Initialisation des points d'abscisse aléatoire
         self.px = [0,
                    random.randrange(100, 200),
                    random.randrange(100, 200),
-                   random.randrange(500, 600),
-                   random.randrange(500, 600),
                    random.randrange(GameConfig.WINDOW_W - 300, GameConfig.WINDOW_W - 200),
                    random.randrange(GameConfig.WINDOW_W - 300, GameConfig.WINDOW_W - 200),
                    GameConfig.WINDOW_W]
-        # Associe une image pour chaque x
+
+        # Associe une image pour chaque x, pour avoir des points d'interpolations
         self.py = [self.f(e) for e in self.px]
-        # Créer la courbe avec lagrange
-        self.polynome = self.get_poly_lagrange(self.px,self.py)
+
+        # Obtient le polynome passant pour tout les points d'interpolation
+        self.polynome = self.getPolyLagrange(self.px,self.py)
 
         # Calcule pour déterminer la taille de la matrice qui contiendra les murs du jeu
         if((GameConfig.WINDOW_H/GameConfig.MUR_H) %2 == 0): #Si le résultat est pair pas de soucis, mais si impair on grande un taille au-dessus
@@ -53,52 +53,60 @@ class Map:
                     GameConfig.MUR.append(pygame.Rect(colonne * GameConfig.MUR_W, ligne * GameConfig.MUR_H, GameConfig.MUR_W,GameConfig.MUR_H))
 
     """
-        Fonction prenant en paramètre un ensemble de valeurs racines et un indice i 
-        Retourne un polynôme avec toutes les racines à 0, mais 1 pour racines[i]
+        Fonction prenant en paramètre les abscisse de nos point d'interpolation et le point i à mettre à 1
+         -racines sont les autre points d'interpolation à mettre à 0 
+        Retourne le polynôme élémentaire, Li avec toutes les racines à 0, mais 1 pour racines[i]
     """
-    def Q(self,racines, i):
+    def L(self,racines, i):
         x = list(racines)
         del x[i]
-        bi = nppol.polyvalfromroots(racines[i], x)
-        Ri = nppol.polyfromroots(x)
-        Qi = (1 / bi) * Ri
-        return Qi
+
+        # On calcule le numérateur de L
+        numerateur = nppol.polyfromroots(x)
+
+        # On calcule le dénominateur de L
+        denominateur = nppol.polyvalfromroots(racines[i], x)
+
+        # On calcule L
+        Li = numerateur/denominateur
+        return Li
 
 
     """
-        Fonction qui prend en paramètre in tableau px et retournant une base de polynômes de Lagrange
+        Fonction qui prend en paramètre les abscisse de nos point d'interpolations
+        et retourne tout les Li, polynome elementaire de lagrange
     """
-    def base_lagrange(self,px):
-
+    def polynomeElementaireLagrange(self,px):
         tab = []
-
+        #Création de tout nos polynome élémentaire de lagrange
         for i in range(len(px)):
-            tab.append(self.Q(px, i))
-
+            tab.append(self.L(px, i))
         return tab
 
     """
-        Fonction qui prend en paramètre un tableau d'abscisse px et py rerépsentant les ordonnées
-        Retournant un polynôme qui passe par tous les points, spécifier par px et py
+        Fonction qui prend en paramètre un tableau nos point d'interpolation et leur valeur en abscisse
+        Retourne un polynôme de degré i <= 5, qui passe par tous les points d'interpolations
     """
-    def get_poly_lagrange(self,px, py):
-
+    def getPolyLagrange(self,px, py):
         P = nppol.polyzero
-        tab_q = self.base_lagrange(px)
 
+        #On possède tout nos polynomes élémentaires
+        tab_q = self.polynomeElementaireLagrange(px)
+
+        #Appliquons la formule de notre polynome P
         for i in range(len(py)):
-            #     # principe : P = P + py[i]*tab_q[i]
+            #Réalisation de la somme
             temp = py[i] * tab_q[i]
-            P = nppol.polyadd(P, temp)
-
+            P = nppol.polyadd(P, temp) #fait la somme de deux polynome
         return P
 
     """
     Fonction qui nous retourne selon un nombre de d'absccisse demandé, tout les images associé
     """
-    def fonction_principale(self):
-        # Interpolation de points
+    def fonctionLagrange(self):
         x = np.linspace(0, GameConfig.WINDOW_W, GameConfig.WINDOW_W)
+
+        #Pour les différent x donnée on récupère leur valeur en ordonnée, avec le polynome créer
         yp = nppol.polyval(x, self.polynome)
         return x,yp
 
@@ -106,7 +114,7 @@ class Map:
     Fonction qui créer la map, en ajoutant dans une liste tout les blocks qui suivent la fontion de lagrange, créer avec notre initialisation
     """
     def createMap(self):
-        x,y = self.fonction_principale()
+        x,y = self.fonctionLagrange()
         for ligne in range(len(x)):
             GameConfig.BLOCKS[ligne] = []
             GameConfig.BLOCKS[ligne].append(pygame.Rect(x[ligne],y[ligne],GameConfig.WINDOW_W/100,GameConfig.WINDOW_W/100))
